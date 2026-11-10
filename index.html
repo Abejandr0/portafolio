@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#dff4ff" />
+  <meta name="description" content="Un juego interactivo para descubrir el portafolio de Alejandro." />
+  <title>La aventura de Alex — Portafolio interactivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <header class="hud">
+      <a class="brand" href="#juego" aria-label="La aventura de Alex"><span class="brand-icon">★</span><span>LA AVENTURA DE ALEX<small>PORTAFOLIO PLAYER 1</small></span></a>
+      <div class="hud-center"><span class="world-tag"><i></i> MUNDO 1</span><span class="hud-level" id="hudLevel">EL BOSQUE DE LAS IDEAS</span></div>
+      <div class="hud-right"><div class="hearts" aria-label="Tres vidas">♥ ♥ ♥</div><div class="coin-count">🟡 <span id="coinCount">00</span></div><button class="icon-button" id="soundButton" aria-label="Alternar animaciones" title="Reducir animaciones">◌</button></div>
+    </header>
+    <section class="play-area" id="juego" aria-label="Juego de plataformas 2D">
+      <div class="scene" id="scene">
+        <div class="sky-sun"></div><div class="cloud cloud-one">☁</div><div class="cloud cloud-two">☁</div><div class="cloud cloud-three">☁</div>
+        <div class="mountain mountain-back"></div><div class="mountain mountain-front"></div>
+        <div class="scene-sign">¡HOLA, AVENTURERO! <span>← MUEVE A ALEX →</span></div>
+        <div class="scene-art" aria-hidden="true">
+          <span class="tree tree-1">🌲</span><span class="tree tree-2">🌳</span><span class="bush bush-1">🌿</span><span class="tree tree-3">🌲</span><span class="flower flower-1">🌼</span><span class="bush bush-2">🌿</span><span class="tree tree-4">🌳</span><span class="flower flower-2">🌸</span><span class="tree tree-5">🌲</span><span class="bush bush-3">🌿</span><span class="tree tree-6">🌳</span>
+        </div>
+        <div class="platform platform-ground"></div><div class="platform ledge ledge-one"></div><div class="platform ledge ledge-two"></div>
+        <div class="path-dots" aria-hidden="true"></div>
+        <div class="checkpoint cp-one" data-cp="0"><span class="flag">⚑</span><small>YO</small></div><div class="checkpoint cp-two" data-cp="1"><span class="flag">⚑</span><small>SKILLS</small></div><div class="checkpoint cp-three" data-cp="2"><span class="flag">⚑</span><small>PROYECTOS</small></div><div class="checkpoint cp-four" data-cp="3"><span class="flag">⚑</span><small>FINAL</small></div>
+        <button class="treasure chest-one" data-chest="0" aria-label="Cofre sobre mí"><span>✦</span><b>▰</b></button><button class="treasure chest-two" data-chest="1" aria-label="Cofre habilidades"><span>✦</span><b>▰</b></button><button class="treasure chest-three" data-chest="2" aria-label="Cofre proyectos"><span>✦</span><b>▰</b></button><div class="goal-flag">🏁</div>
+        <div class="player" id="player" role="img" aria-label="Alex, personaje jugador"><span class="player-shadow"></span><span class="player-backpack"></span><span class="player-hair"></span><span class="player-head"><i></i></span><span class="player-body"></span><span class="player-arm"></span><span class="player-leg leg-a"></span><span class="player-leg leg-b"></span></div>
+        <div class="speech-bubble" id="speechBubble">¡Hola! ¿Me ayudas a explorar?</div><div class="game-toast" id="gameToast" aria-live="polite"></div>
+        <div class="scene-controls"><button id="leftButton" aria-label="Mover a la izquierda">←</button><button id="upButton" aria-label="Saltar">↑</button><button id="rightButton" aria-label="Mover a la derecha">→</button></div>
+        <div class="scene-tip">MUEVE CON ← → · SALTA CON ↑</div>
+      </div>
+      <aside class="map-card"><div class="map-card-title"><span>MAPA DEL MUNDO</span><span class="map-pin">✦</span></div><div class="map-track"><div class="map-line"></div><button class="map-stop active" data-jump="0"><b>⌂</b><small>YO</small></button><button class="map-stop" data-jump="1"><b>✿</b><small>SKILLS</small></button><button class="map-stop" data-jump="2"><b>▣</b><small>PROYECTOS</small></button><button class="map-stop" data-jump="3"><b>⚑</b><small>FINAL</small></button></div><div class="map-footer"><span>RECORRIDO</span><b id="progressLabel">0 / 4</b><div class="progress-bar"><i id="progressBar"></i></div></div></aside>
+    </section>
+
+    <section class="lower-deck">
+      <div class="blocks-panel">
+        <div class="panel-heading"><div><span class="eyebrow">MOCHILA DE CÓDIGO</span><h2>¡Arma tu camino!</h2></div><span class="block-count"><b id="blockCount">0</b> bloques</span></div>
+        <p class="panel-subtitle">Arrastra bloques a la secuencia y pulsa <b>¡A jugar!</b></p>
+        <div class="block-shelf" id="blockShelf" aria-label="Bloques disponibles">
+          <button class="code-block go-block" draggable="true" data-action="right"><span class="block-symbol">➜</span><b>Avanzar</b><small>mover a Alex</small></button>
+          <button class="code-block jump-block" draggable="true" data-action="jump"><span class="block-symbol">↟</span><b>Saltar</b><small>¡super salto!</small></button>
+          <button class="code-block open-block" draggable="true" data-action="open"><span class="block-symbol">✧</span><b>Abrir cofre</b><small>descubrir tesoro</small></button>
+          <button class="code-block left-block" draggable="true" data-action="left"><span class="block-symbol">⬅</span><b>Retroceder</b><small>volver atrás</small></button>
+        </div>
+      </div>
+      <div class="sequence-panel">
+        <div class="sequence-heading"><div><span class="eyebrow">SECUENCIA</span><h2>Tu plan de aventura</h2></div><button class="reset-button" id="resetButton" title="Vaciar secuencia">↺ <span>limpiar</span></button></div>
+        <div class="drop-zone" id="dropZone" tabindex="0" aria-label="Suelta aquí los bloques para crear tu secuencia"><div class="empty-drop" id="emptyDrop"><span>＋</span><div><b>Suelta aquí tus bloques</b><small>o toca un bloque para añadirlo</small></div></div><div class="sequence-list" id="sequenceList"></div></div>
+        <div class="sequence-actions"><button class="play-button" id="playButton">▶ &nbsp; ¡A jugar!</button><div class="sequence-feedback" id="sequenceFeedback">⏵ Tu guía te ayudará si te atascas</div></div>
+      </div>
+      <div class="guide-card"><div class="guide-face">🦉</div><div class="guide-content"><span class="eyebrow">BÚHO GUÍA</span><b id="guideTitle">¡Bienvenido al bosque!</b><p id="guideMessage">Añade bloques y ayuda a Alex a encontrar los cofres. ¡Cada uno esconde algo sobre mí!</p></div><span class="guide-sparkle">✦</span></div>
+    </section>
+
+    <section class="treasure-info" id="treasureInfo"><div class="treasure-badge">🎁</div><div><span class="eyebrow" id="infoEyebrow">¡TESORO ENCONTRADO!</span><h2 id="infoTitle">Un poco sobre mí</h2><p id="infoText">Soy Alejandro, estudiante de diseño de interfaces. Me gusta transformar ideas en experiencias digitales claras, útiles y llenas de personalidad.</p></div><button id="closeInfo" aria-label="Cerrar">×</button></section>
+    <footer class="game-footer"><span>HECHO CON <b>💙</b> Y MUCHAS GANAS DE CREAR</span><span>GRACIAS POR JUGAR, NOS VEMOS EN LA META ✨</span><a href="mailto:hola@ejemplo.com">ENVIAR MENSAJE ↗</a></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
