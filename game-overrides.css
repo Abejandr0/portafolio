@@ -6,3 +6,15 @@
 @keyframes treasure-pop{50%{transform:scale(1.28) rotate(-7deg)}}
 @keyframes hint-nudge{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 @media(prefers-reduced-motion:reduce){.cell.opened-chest .decoration,.assistant.attention{animation:none}}
+.assistant{display:none}
+.assistant.show{display:flex}
+.left-hint{display:none}
+.board-wrap{flex:none;height:min(628px,76vh)}
+.board{padding:0 13.5% 8px}
+.code-panel{padding-top:9px}
+.workspace-label{display:none}
+.drop-placeholder{display:none}
+body{padding:8px 20px;background:#faf9f5}
+.game-app{height:min(890px,calc(100vh - 16px));min-height:min(890px,calc(100vh - 16px))}
+@media(max-width:1000px){.board-wrap{height:min(580px,68vh)}.board{padding:0 20% 8px}}
+@media(max-width:620px){body{padding:0}.game-app{height:auto;min-height:100vh}.board-wrap{height:min(480px,58vh)}.board{padding:0 9% 8px}}

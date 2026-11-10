@@ -15,13 +15,12 @@
     <section class="left-column">
       <nav class="checkpoints" aria-label="Saltar entre checkpoints"><b>Checkpoints</b><button class="checkpoint active" data-jump="start">Inicio</button><button class="checkpoint" data-jump="skills">Habilidades</button><button class="checkpoint" data-jump="projects">Proyectos</button><button class="checkpoint" data-jump="finish">Meta</button></nav>
       <section class="board-wrap" aria-label="Tablero de juego"><div class="board" id="board" role="grid" aria-label="Tablero 2D de cinco columnas y siete filas"></div><div class="board-status"><div class="progress-track"><i id="progressFill"></i></div><b>Progreso <span id="progressText">0/4</span></b><b class="steps-label">Pasos: <span id="stepsText">0</span></b></div></section>
-      <div class="left-hint"><span>⌨</span> Arrastra bloques, crea tu ruta y ayuda a Alex a llegar a los cofres.</div>
     </section>
 
     <section class="right-column">
       <header class="mission-bar"><div><small>¡HOLA, AVENTURERO!</small><h1>Misión: ¡abre los 4 cofres!</h1></div><span class="mission-count" id="missionCount">0/4</span></header>
       <div class="coding-layout">
-        <aside class="block-palette"><h2>Bloques</h2><p class="palette-subtitle">Elige qué hará Alex</p>
+        <aside class="block-palette"><h2>Bloques</h2>
           <div class="palette-list">
             <button class="block move-block" draggable="true" data-op="move"><span class="block-icon">➜</span><span>Avanzar <i>1</i> casilla</span></button>
             <button class="block jump-block" draggable="true" data-op="jump"><span class="block-icon">↟</span><span>Saltar <i>2</i> casillas</span></button>
@@ -31,8 +30,8 @@
           </div>
           <p class="drag-note">Arrastra al área de código o haz clic.</p>
         </aside>
-        <section class="code-panel" aria-label="Área de programación"><div class="workspace-label"><span>ÁREA DE CÓDIGO</span><button id="helpButton" class="help-button" aria-label="Pedir una pista">?</button></div>
-          <div class="workspace" id="workspace" tabindex="0" aria-label="Suelta aquí los bloques para programar a Alex"><div class="start-block"><span>al hacer clic en</span><b>⚑</b></div><div class="program-blocks" id="programBlocks"></div><div class="drop-placeholder" id="dropPlaceholder">Suelta aquí tus bloques<br /><small>Se ejecutarán de arriba a abajo</small></div></div>
+        <section class="code-panel" aria-label="Área de programación">
+          <div class="workspace" id="workspace" tabindex="0" aria-label="Suelta aquí los bloques para programar a Alex"><div class="start-block"><span>al hacer clic en</span><b>⚑</b></div><div class="program-blocks" id="programBlocks"></div><div class="drop-placeholder" id="dropPlaceholder" aria-hidden="true"></div></div>
           <div class="code-actions"><button id="runButton" class="run-button">▶ <span>Ejecutar</span></button><button id="resetButton" class="secondary-button">Reiniciar</button><button id="portfolioButton" class="secondary-button portfolio-button">Portafolio</button></div>
         </section>
       </div>
