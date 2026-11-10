@@ -16,5 +16,36 @@
 .drop-placeholder{display:none}
 body{padding:8px 20px;background:#faf9f5}
 .game-app{height:min(890px,calc(100vh - 16px));min-height:min(890px,calc(100vh - 16px))}
-@media(max-width:1000px){.board-wrap{height:min(580px,68vh)}.board{padding:0 20% 8px}}
+@media(max-width:1000px){.game-app{height:auto;min-height:100vh}.board-wrap{height:min(580px,68vh)}.board{padding:0 20% 8px}}
 @media(max-width:620px){body{padding:0}.game-app{height:auto;min-height:100vh}.board-wrap{height:min(480px,58vh)}.board{padding:0 9% 8px}}
+.cell.obstacle{background:linear-gradient(145deg,#426b50,#365c45);box-shadow:inset 0 -7px #2e513d,inset 0 0 0 1px #ffffff0b}
+.cell.obstacle.mossy{background:linear-gradient(145deg,#496f4e,#3b6147)}
+.cell.walkable{background:linear-gradient(145deg,#7dbb70,#6ea965);box-shadow:inset 0 -7px #568a50,inset 0 0 0 1px #ffffff17}
+.cell.walkable.mossy{background:linear-gradient(145deg,#8aca72,#77b768)}
+.cell.walkable.shady{background:linear-gradient(145deg,#75b56d,#669f64)}
+.cell .decoration.scenery{font-size:clamp(24px,3.3vw,39px);animation:scenery-sway 3s ease-in-out infinite;transform-origin:bottom center}
+.cell.player-cell .avatar{animation:avatar-idle 1.3s ease-in-out infinite}
+.cell.player-cell .avatar.avatar-arrive{animation:avatar-enter .2s cubic-bezier(.2,.8,.3,1) both,avatar-idle 1.3s .2s ease-in-out infinite}
+.cell.player-cell .avatar.jump-takeoff{animation:avatar-jump .17s ease-in forwards}
+.cell.player-cell{outline-color:#d5ff6b;box-shadow:inset 0 0 0 3px #d5ff6b, inset 0 -7px #7cbd54,0 0 15px #d4ff7b78}
+.cell.opened-chest{animation:chest-reveal .35s ease-out}
+.mission-complete .cell[data-x="4"][data-y="6"]{outline:3px solid #ffcf43;outline-offset:-5px;box-shadow:0 0 18px #ffe85a9c}
+.assistant{border:2px solid #6ab8f1;box-shadow:0 3px 0 #398ee8}
+.assistant.show{animation:owl-pop .2s ease-out}
+@keyframes scenery-sway{50%{translate:0 -2px;rotate:1deg}}
+@keyframes avatar-idle{50%{translate:0 -4px}}
+@keyframes avatar-enter{from{opacity:.35;scale:.68;translate:0 7px}to{opacity:1;scale:1;translate:0 0}}
+@keyframes avatar-jump{to{translate:0 -26px;scale:.88}}
+@keyframes chest-reveal{45%{scale:1.06;filter:brightness(1.25)}}
+@keyframes owl-pop{from{opacity:0;transform:translateY(8px)}}
+@media(prefers-reduced-motion:reduce){.cell .decoration.scenery,.cell.player-cell .avatar,.cell.opened-chest,.assistant.show{animation:none}}
+.discovery-card{inset:0;width:100%;height:100%;max-width:none;padding:18px;transform:none;border:0;border-radius:0;background:#1b2b5775;box-shadow:none;place-items:center;z-index:100}
+.discovery-card.show{display:grid}
+.discovery-content{position:relative;width:min(470px,100%);padding:22px;display:flex;align-items:flex-start;gap:16px;border:3px solid var(--navy);border-radius:22px;background:#fffdf3;box-shadow:0 8px 0 var(--navy),0 20px 70px #10244b45;animation:pop .25s both}
+.discovery-content>button{position:absolute;right:12px;top:9px;border:0;background:transparent;color:#8191a2;font-size:23px;cursor:pointer}
+.discovery-content h2{padding-right:14px}
+@media(max-width:500px){.discovery-content{padding:17px;gap:11px}.discovery-art{width:46px;height:46px;font-size:25px}.discovery-content h2{font-size:19px}.discovery-content p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.cell.player-cell .avatar.avatar-arrive,.cell.player-cell .avatar.jump-takeoff{animation:none}}
+.discovery-card.complete .discovery-content{background-color:#fff8d8;background-image:radial-gradient(circle at 12% 10%,#ffda685e 0 5px,transparent 6px),radial-gradient(circle at 86% 20%,#84d7ff75 0 5px,transparent 6px),radial-gradient(circle at 90% 88%,#ffa47c68 0 5px,transparent 6px)}
+.discovery-card.complete .discovery-art{background:#ffdf6c;animation:win-bounce .65s ease-in-out infinite alternate}
+@keyframes win-bounce{to{transform:translateY(-4px) rotate(5deg)}}
