@@ -1,0 +1,6 @@
+/* States layered over the main game skin. */
+.player.jumping{transform:translateY(-55px)}
+.treasure.opened{animation:none;filter:grayscale(.65);opacity:.65}
+.checkpoint.visited .flag{color:#ffdf65}
+.map-stop:focus-visible,.code-block:focus-visible,.play-button:focus-visible,.reset-button:focus-visible,.treasure:focus-visible,.scene-controls button:focus-visible{outline:3px solid #ffbd57;outline-offset:3px}
+.sequence-item.go-block{background:#4a9bea}.sequence-item.left-block{background:#68bd9a}.sequence-item.jump-block{background:#a28be7}.sequence-item.open-block{background:#f5a454}
