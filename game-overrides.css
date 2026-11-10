@@ -1,6 +1,8 @@
-/* States layered over the main game skin. */
-.player.jumping{transform:translateY(-55px)}
-.treasure.opened{animation:none;filter:grayscale(.65);opacity:.65}
-.checkpoint.visited .flag{color:#ffdf65}
-.map-stop:focus-visible,.code-block:focus-visible,.play-button:focus-visible,.reset-button:focus-visible,.treasure:focus-visible,.scene-controls button:focus-visible{outline:3px solid #ffbd57;outline-offset:3px}
-.sequence-item.go-block{background:#4a9bea}.sequence-item.left-block{background:#68bd9a}.sequence-item.jump-block{background:#a28be7}.sequence-item.open-block{background:#f5a454}
+.cell.opened-chest .decoration{animation:treasure-pop .35s ease-out;filter:drop-shadow(0 2px 3px #ffe269)}
+.checkpoint.visited{background:#fff0a5}
+.assistant.attention{animation:hint-nudge .35s ease-in-out}
+.assistant.quiet{opacity:.58}
+.discovery-card{box-shadow:0 8px 0 var(--navy),0 0 0 100vmax #15244d55,0 20px 70px #10244b45}
+@keyframes treasure-pop{50%{transform:scale(1.28) rotate(-7deg)}}
+@keyframes hint-nudge{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@media(prefers-reduced-motion:reduce){.cell.opened-chest .decoration,.assistant.attention{animation:none}}
