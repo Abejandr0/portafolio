@@ -10,11 +10,24 @@ Portafolio web presentado como un juego 2D de exploración y programación por b
 - Lee cada hallazgo y cierra la ficha para reanudar la secuencia.
 - Usa los checkpoints para saltar directamente a una sección, o «Reiniciar» para repetir el nivel.
 
-El perfil, los proyectos y `hola@ejemplo.com` son textos de ejemplo que deben reemplazarse por la información final. El búho ofrece pistas locales según el estado del juego; no realiza llamadas a un modelo de IA. Este prototipo implementa los bloques y el tablero en JavaScript; todavía no lleva una escena Scratch embebida ni un servicio de IA remoto.
+## Proyectos y contacto
+
+- [MotoTracer](https://github.com/Abejandr0/mototracer)
+- [MotoMod](https://github.com/Abejandr0/mods-app)
+- [Honey](https://github.com/Abejandr0/honey)
+- [CodeType](https://github.com/Abejandr0/codeType)
+- [Instagram · @alejojcastro](https://www.instagram.com/alejojcastro/)
+- [GitHub · Abejandr0](https://github.com/Abejandr0)
+
+Los bloques del juego se ejecutan con un intérprete local que mueve al personaje sobre la cuadrícula. La interfaz conserva el flujo de programación visual estilo Scratch; todavía no hay un proyecto de Scratch externo incrustado porque no se encontró un ID ni archivo `.sb3` público en la cuenta indicada. Scratch permite incrustar un proyecto mediante su ID. El búho da pistas locales mientras no haya endpoint de IA.
+
+## Conectar la IA después del despliegue
+
+`config.js` contiene `aiCoachEndpoint`, inicialmente vacío. Cuando exista un endpoint HTTPS de API Gateway/Lambda, asígnalo allí. El juego enviará al endpoint un `POST` JSON con `message`, coordenadas/dirección del personaje, cofres abiertos y pasos. La respuesta esperada es `{ "message": "Pista breve para el jugador" }`. Si el endpoint falla o sigue vacío, se conserva la pista local. La clave del proveedor debe permanecer en Lambda/Secrets Manager; nunca en `config.js`.
 
 ## Publicar en AWS
 
-Para una primera publicación se puede alojar como sitio estático en Amazon S3 y distribuirlo con CloudFront. Sube `index.html`, `styles.css`, `game-overrides.css` y `app.js` al origen S3, configura el documento predeterminado como `index.html` y habilita HTTPS mediante CloudFront. No se necesita proceso de compilación.
+Para una primera publicación se puede alojar como sitio estático en Amazon S3 y distribuirlo con CloudFront. Sube `index.html`, `styles.css`, `game-overrides.css`, `config.js` y `app.js` al origen S3, configura el documento predeterminado como `index.html` y habilita HTTPS mediante CloudFront. No se necesita proceso de compilación.
 
 Ejemplo de carga (reemplaza el bucket por el tuyo):
 
