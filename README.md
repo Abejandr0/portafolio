@@ -1,12 +1,12 @@
-# La aventura de Alex
+# Sendero del polen — Portafolio de Alejandro
 
-Portafolio web presentado como un juego 2D de exploración y programación por bloques. Es una página estática: abre `index.html` en un navegador o sírvela desde cualquier hosting estático.
+Portafolio web presentado como un juego 2D de exploración y programación visual por bloques. Es una página estática: abre `index.html` en un navegador o sírvela desde cualquier hosting estático.
 
 ## Controles
 
-- Arrastra bloques de la paleta al área punteada (o tócalos para agregarlos); puedes reordenarlos.
-- Ejecuta una secuencia para avanzar, saltar, girar y abrir cofres.
-- Acércate a un cofre y usa «Interactuar». El búho muestra una pista si Alex choca o todavía está lejos.
+- Arrastra bloques de la paleta al programa (o tócalos para agregarlos); puedes reordenarlos y arrastrarlos a la papelera para quitarlos.
+- Ejecuta una secuencia para mover la abeja por el sendero ascendente, saltar, girar y abrir cofres.
+- La brújula y el personaje indican el rumbo actual. El búho muestra una pista si la abeja choca o todavía está lejos de un cofre.
 - Lee cada hallazgo y cierra la ficha para reanudar la secuencia.
 - Usa los checkpoints para saltar directamente a una sección, o «Reiniciar» para repetir el nivel.
 
@@ -19,7 +19,7 @@ Portafolio web presentado como un juego 2D de exploración y programación por b
 - [Instagram · @alejojcastro](https://www.instagram.com/alejojcastro/)
 - [GitHub · Abejandr0](https://github.com/Abejandr0)
 
-Los bloques del juego se ejecutan con un intérprete local que mueve al personaje sobre la cuadrícula. La interfaz conserva el flujo de programación visual estilo Scratch; todavía no hay un proyecto de Scratch externo incrustado porque no se encontró un ID ni archivo `.sb3` público en la cuenta indicada. Scratch permite incrustar un proyecto mediante su ID. El búho da pistas locales mientras no haya endpoint de IA.
+Los bloques se ejecutan con un intérprete local que mueve la abeja sobre una cuadrícula vertical de un solo camino. La interfaz toma como referencia los bloques encajables de Scratch, sin cargar el editor externo ni requerir una cuenta o proyecto de Scratch. El búho da pistas locales mientras no haya endpoint de IA.
 
 ## Conectar la IA después del despliegue
 
@@ -27,7 +27,7 @@ Los bloques del juego se ejecutan con un intérprete local que mueve al personaj
 
 ## Publicar en AWS
 
-Para una primera publicación se puede alojar como sitio estático en Amazon S3 y distribuirlo con CloudFront. Sube `index.html`, `styles.css`, `game-overrides.css`, `config.js` y `app.js` al origen S3, configura el documento predeterminado como `index.html` y habilita HTTPS mediante CloudFront. No se necesita proceso de compilación.
+Para una primera publicación se puede alojar como sitio estático en Amazon S3 y distribuirlo con CloudFront. Sube `index.html`, `styles.css`, `config.js` y `app.js` al origen S3, configura el documento predeterminado como `index.html` y habilita HTTPS mediante CloudFront. No se necesita proceso de compilación.
 
 Ejemplo de carga (reemplaza el bucket por el tuyo):
 
