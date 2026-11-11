@@ -3,43 +3,75 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#91d4f8" />
-  <meta name="description" content="Programa a Alex con bloques y descubre su portafolio en una aventura 2D." />
-  <title>Aventura por bloques — Portafolio de Alejandro</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" /><link rel="stylesheet" href="game-overrides.css" />
+  <meta name="theme-color" content="#f4f4eb" />
+  <meta name="description" content="Programa el vuelo de una abeja y descubre el portafolio de Alejandro." />
+  <title>Sendero del polen — Portafolio de Alejandro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="game-app">
-    <section class="left-column">
-      <nav class="checkpoints" aria-label="Saltar entre checkpoints"><b>Checkpoints</b><button class="checkpoint active" data-jump="start">Inicio</button><button class="checkpoint" data-jump="skills">Habilidades</button><button class="checkpoint" data-jump="projects">Proyectos</button><button class="checkpoint" data-jump="finish">Meta</button></nav>
-      <section class="board-wrap" aria-label="Tablero de juego"><div class="board" id="board" role="grid" aria-label="Tablero 2D de cinco columnas y siete filas"></div><div class="board-status"><div class="progress-track"><i id="progressFill"></i></div><b>Progreso <span id="progressText">0/4</span></b><b class="steps-label">Pasos: <span id="stepsText">0</span></b></div></section>
-    </section>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="brand" href="#juego" aria-label="Sendero del polen, inicio">
+        <span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 35 11.5v17L20 37 5 28.5v-17L20 3Z"/><path class="mark-wing" d="M14 14c-6-6-10 2-3 6M26 14c6-6 10 2 3 6"/><ellipse cx="20" cy="21" rx="8" ry="6"/><path d="M17 15v12m6-12v12"/><circle cx="27" cy="20" r="1"/></svg></span>
+        <span><b>Sendero del polen</b><small>PORTAFOLIO INTERACTIVO · ALEJANDRO</small></span>
+      </a>
+      <div class="mission-progress" aria-label="Progreso de cofres"><span class="mission-label">MISIÓN <b>4 COFRES</b></span><div class="honey-track" id="honeyTrack"></div><span class="mission-count" id="missionCount">0 <i>/ 4</i></span></div>
+      <a class="profile-link" href="https://github.com/Abejandr0" target="_blank" rel="noopener noreferrer">VER PERFIL <span>↗</span></a>
+    </header>
 
-    <section class="right-column">
-      <header class="mission-bar"><div><small>¡HOLA, AVENTURERO!</small><h1>Misión: ¡abre los 4 cofres!</h1></div><span class="mission-count" id="missionCount">0/4</span></header>
-      <div class="coding-layout">
-        <aside class="block-palette"><h2>Bloques</h2>
-          <div class="palette-list">
-            <button class="block move-block" draggable="true" data-op="move"><span class="block-icon">➜</span><span>Avanzar <i>1</i> casilla</span></button>
-            <button class="block jump-block" draggable="true" data-op="jump"><span class="block-icon">↟</span><span>Saltar <i>2</i> casillas</span></button>
-            <button class="block turn-block" draggable="true" data-op="right"><span class="block-icon">↻</span><span>Girar <i>90°</i> grados der.</span></button>
-            <button class="block turn-block" draggable="true" data-op="left"><span class="block-icon">↺</span><span>Girar <i>90°</i> grados izq.</span></button>
-            <button class="block interact-block" draggable="true" data-op="interact"><span class="block-icon">✦</span><span>Interactuar</span></button>
-          </div>
-          <p class="drag-note">Arrastra al área de código o haz clic.</p>
-        </aside>
-        <section class="code-panel" aria-label="Área de programación">
-          <div class="workspace" id="workspace" tabindex="0" aria-label="Suelta aquí los bloques para programar a Alex"><div class="start-block"><span>al hacer clic en</span><b>⚑</b></div><div class="program-blocks" id="programBlocks"></div><div class="drop-placeholder" id="dropPlaceholder" aria-hidden="true"></div></div>
-          <div class="code-actions"><button id="runButton" class="run-button">▶ <span>Ejecutar</span></button><button id="resetButton" class="secondary-button">Reiniciar</button><button id="portfolioButton" class="secondary-button portfolio-button">Portafolio</button></div>
-        </section>
-      </div>
-      <div class="assistant" id="assistant" aria-live="polite"><span class="assistant-avatar">🦉</span><div><b id="assistantTitle">Búho guía</b><p id="assistantMessage">¡Hola! Arrastra un bloque al área de código. Te ayudaré si Alex se equivoca.</p></div><button id="dismissAssistant" aria-label="Cerrar sugerencia">×</button></div>
-    </section>
+    <div class="game-layout" id="juego">
+      <section class="world-card" aria-label="Mapa del Sendero del polen">
+        <div class="world-heading"><div><span class="eyebrow">NIVEL ÚNICO · 3 MIN</span><h1>El sendero del polen</h1><p>Sube por el bosque. Cada parada guarda algo de mi mundo.</p></div><div class="weather-badge"><span class="sun-dot"></span> BOSQUE · DÍA 01</div></div>
+        <nav class="checkpoint-nav" aria-label="Saltar a un checkpoint">
+          <span class="checkpoint-caption">ATALLOS</span>
+          <button class="checkpoint active" data-checkpoint="start"><i>↟</i><span>Inicio</span></button>
+          <button class="checkpoint" data-checkpoint="skills"><i>✳</i><span>Skills</span></button>
+          <button class="checkpoint" data-checkpoint="projects"><i>◇</i><span>Proyectos</span></button>
+          <button class="checkpoint" data-checkpoint="finish"><i>⚑</i><span>Meta</span></button>
+        </nav>
+        <div class="map-frame">
+          <div class="map-topline"><span><i class="online-dot"></i> SENDERO ACTIVO</span><span id="mapAltitude">ALT. 00 M</span></div>
+          <div class="map-window" id="mapViewport"><div class="board" id="board" role="grid" aria-label="Camino vertical de una abeja"></div><div class="map-vignette"></div></div>
+          <div class="map-bottomline"><div class="heading-readout"><span class="compass-rose" id="compassArrow">↑</span><span>RUMBO <b id="headingLabel">NORTE</b></span></div><span class="steps-readout"><span id="stepsText">0</span> CASILLAS</span></div>
+          <div class="path-progress" aria-label="Paradas visitadas"><div class="progress-caption"><span>PARADAS DESCUBIERTAS</span><b id="progressText">0 / 4</b></div><div class="progress-rail" id="progressRail"></div></div>
+        </div>
+      </section>
+
+      <section class="workbench" aria-label="Programar el vuelo">
+        <header class="workbench-heading"><div><span class="eyebrow">TALLER DE VUELO</span><h2>Programa a la abeja</h2><p>Ordena los bloques y observa cómo encuentra el camino.</p></div><div class="drag-tip"><span class="drag-diamond">✦</span> ARRASTRA<br />O TOCA</div></header>
+        <div class="coding-layout">
+          <aside class="block-palette"><div class="palette-heading"><h3>Bloques</h3><span>01—05</span></div>
+            <div class="palette-list" id="blockPalette">
+              <button class="palette-block move-block" draggable="true" data-op="move"><span class="block-glyph">↑</span><span class="block-name">Avanzar <i>1</i> casilla</span><span class="block-grip">⠿</span></button>
+              <button class="palette-block jump-block" draggable="true" data-op="jump"><span class="block-glyph">⌁</span><span class="block-name">Saltar <i>2</i> casillas</span><span class="block-grip">⠿</span></button>
+              <button class="palette-block turn-block" draggable="true" data-op="right"><span class="block-glyph">↻</span><span class="block-name">Girar 90° <small>DERECHA</small></span><span class="block-grip">⠿</span></button>
+              <button class="palette-block turn-block" draggable="true" data-op="left"><span class="block-glyph">↺</span><span class="block-name">Girar 90° <small>IZQUIERDA</small></span><span class="block-grip">⠿</span></button>
+              <button class="palette-block interact-block" draggable="true" data-op="interact"><span class="block-glyph">✧</span><span class="block-name">Abrir cofre</span><span class="block-grip">⠿</span></button>
+            </div>
+            <div class="palette-foot"><span class="palette-tip-dot"></span> Los bloques siguen el orden de arriba a abajo.</div>
+          </aside>
+
+          <section class="code-panel" aria-label="Secuencia de bloques">
+            <div class="code-toolbar"><span><i class="code-led"></i> MI PROGRAMA</span><span class="code-count"><b id="blockCount">0</b> BLOQUES</span></div>
+            <div class="workspace" id="workspace" tabindex="0" aria-label="Suelta los bloques aquí para programar a la abeja">
+              <div class="start-block"><span class="flag-icon">⚑</span><span>al comenzar la aventura</span><i class="start-notch"></i></div>
+              <div class="program-blocks" id="programBlocks"></div>
+              <div class="drop-prompt" id="dropPrompt"><span class="drop-orbit">＋</span><b>Construye tu ruta</b><small>Arrastra un bloque desde la paleta<br />o tócalo para añadirlo.</small></div>
+            </div>
+            <div class="workspace-bottom"><div class="trash-zone" id="trashZone" aria-label="Suelta aquí bloques para eliminarlos"><span class="trash-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 3v7m4-7v7"/></svg></span><span><b>Papelera</b><small>arrastra aquí para borrar</small></span><span class="trash-spark">✳</span></div><span class="editor-note">SECUENCIA VISUAL</span></div>
+            <div class="run-controls"><button class="run-button" id="runButton"><span class="play-glyph">▶</span> Ejecutar ruta <kbd>↵</kbd></button><button class="reset-button" id="resetButton"><span>↺</span> Reiniciar</button><button class="portfolio-button" id="portfolioButton">Mi portafolio <span>↗</span></button></div>
+          </section>
+        </div>
+        <div class="assistant" id="assistant" aria-live="polite"><span class="assistant-avatar"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6c-8 0-15 8-15 18v11h30V24C39 14 32 6 24 6Z"/><path d="m12 17-6-5m30 5 6-5"/><ellipse cx="18" cy="24" rx="2" ry="3"/><ellipse cx="30" cy="24" rx="2" ry="3"/><path d="M18 31q6 6 12 0"/><path d="M16 36h16v7H16z"/></svg></span><div><b id="assistantTitle">Búho guía</b><p id="assistantMessage">Sigue las baldosas iluminadas. Si algo sale mal, te daré una pista.</p></div><button id="dismissAssistant" aria-label="Cerrar sugerencia">×</button></div>
+      </section>
+    </div>
+    <footer class="page-footer"><span>UNA AVENTURA CORTA PARA CONOCER A <b>ALEJANDRO</b></span><span>HECHO CON CURIOSIDAD <i>✳</i></span></footer>
   </main>
-  <section class="discovery-card" id="discoveryCard" aria-live="polite"><div class="discovery-content"><div class="discovery-art" id="discoveryArt">🎁</div><div><span class="discovery-kicker" id="discoveryKicker">COFRE DESCUBIERTO</span><h2 id="discoveryTitle">¡Hola! Soy Alejandro</h2><p id="discoveryText">Este cofrecito guarda una parte de mi historia.</p><div id="discoveryLinks" class="discovery-links"></div></div><button id="closeDiscovery" aria-label="Cerrar">×</button></div></section>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+
+  <section class="discovery-card" id="discoveryCard" aria-live="polite"><div class="discovery-content"><div class="discovery-art" id="discoveryArt">✦</div><div class="discovery-copy"><span class="discovery-kicker" id="discoveryKicker">COFRE DESCUBIERTO</span><h2 id="discoveryTitle">¡Hola!</h2><p id="discoveryText"></p><div id="discoveryLinks" class="discovery-links"></div></div><button id="closeDiscovery" aria-label="Cerrar">×</button></div></section>
+  <script src="config.js"></script><script src="app.js"></script>
 </body>
 </html>
