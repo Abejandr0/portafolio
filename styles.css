@@ -163,3 +163,100 @@ body.high-contrast .discovery-actions button{border:2px solid #111!important;bac
 @media(max-width:850px){.discovery-links{grid-template-columns:repeat(2,minmax(0,1fr))}.discovery-project{min-height:98px}}
 @media(max-width:640px){.discovery-card{padding:10px}.discovery-content{grid-template-columns:58px minmax(0,1fr);gap:14px;width:min(100%,560px);max-height:calc(100dvh - 20px);padding:24px 18px 20px}.discovery-art{width:54px;height:54px;border-radius:16px}.discovery-art svg{width:42px;height:42px}.discovery-copy{padding-right:0}.discovery-copy h2{font-size:25px}.discovery-copy p{font-size:16px}.discovery-badge{font-size:12px}.discovery-highlights{grid-template-columns:1fr;gap:8px;margin-top:14px}.discovery-highlights li{min-height:0;padding:11px 12px 11px 34px;font-size:13px}.discovery-highlights li:before{top:11px;left:12px}.discovery-links{grid-template-columns:1fr;gap:9px;margin-top:15px}.discovery-project{min-height:82px;padding:13px}.discovery-project-copy strong{font-size:16px}.discovery-project-copy>span{font-size:13px}.discovery-actions{margin-top:17px;padding:11px 0 5px}.discovery-actions button{min-height:52px;font-size:16px}.discovery-content>button{top:10px;right:10px;width:34px;height:34px}}
 @media(max-width:380px){.discovery-content{grid-template-columns:1fr;gap:8px;padding:20px 15px 16px}.discovery-art{width:48px;height:48px}.discovery-art svg{width:38px;height:38px}.discovery-copy h2{font-size:23px}.discovery-copy p{font-size:15px}.discovery-kicker{font-size:10px!important}}
+
+/* Guía de inicio en tarjetas ilustradas e interactivas. */
+.guide-link{flex:none;min-height:40px;padding:8px 12px;border:1px solid #dbe3df;border-radius:12px;background:#fffdf7;color:#475c67;font-size:11px;font-weight:900;cursor:pointer;transition:transform .18s,border .18s,background .18s}
+.guide-link:hover{transform:translateY(-2px);border-color:#9cc7bd;background:#f5faf5}
+.welcome-tour{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:clamp(10px,3vw,32px);background:#1d3048b8;backdrop-filter:blur(8px)}
+.welcome-tour[hidden]{display:none}
+body.welcome-tour-open{overflow:hidden}
+.tour-dialog{position:relative;isolation:isolate;display:grid;gap:18px;width:min(940px,100%);max-height:min(94dvh,850px);overflow:auto;padding:clamp(18px,3vw,30px);border:1px solid #e3e8dd;border-radius:28px;background:#fffdf6;box-shadow:0 18px 0 #17283b24,0 35px 100px #1320337a;scrollbar-color:#c6d7bb transparent;scrollbar-width:thin}
+.tour-dialog:before,.tour-dialog:after{position:absolute;z-index:-1;inset:8px 10px -7px;content:"";border:1px solid #ffffff90;border-radius:29px;background:#f5f3e8;transform:rotate(1.2deg)}
+.tour-dialog:after{inset:5px 12px -5px;background:#e9f1e5;transform:rotate(-.7deg)}
+.tour-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.tour-header>div:first-child{display:grid;gap:4px}
+.tour-eyebrow{color:#799085;font:10px 'DM Mono',monospace;letter-spacing:.12em}
+.tour-counter{color:#536b5c;font-size:12px;font-weight:900}
+.tour-progress-track{flex:none;width:min(190px,35%);height:8px;overflow:hidden;border:1px solid #e1e4d6;border-radius:99px;background:#edf0e5}
+.tour-progress-track span{display:block;width:25%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7bc589,#e5bd4a);transition:width .3s ease}
+.tour-card{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(0,1.1fr);align-items:center;gap:clamp(18px,4vw,44px);min-height:330px;padding:clamp(18px,3.4vw,34px);border:1px solid #e4e8dd;border-radius:23px;background:radial-gradient(ellipse at 10% 0,#eff8e8 0,transparent 48%),linear-gradient(145deg,#fff,#fbfcf7);box-shadow:inset 0 -5px #eef1e8}
+.tour-card.is-changing{animation:tour-card-arrive .25s ease-out}
+.tour-art-button{position:relative;display:grid;place-items:center;gap:12px;min-height:270px;padding:20px;border:1px solid #e4d79e;border-radius:22px;background:radial-gradient(ellipse at 50% 35%,#fff7d9,#f7f0d7 64%,#eaf1dd);color:#7b692f;cursor:pointer;overflow:hidden;transition:transform .2s,border .2s,box-shadow .2s}
+.tour-art-button:before{position:absolute;inset:13px;content:"";border:1px dashed #dfd39a;border-radius:16px;pointer-events:none}
+.tour-art-button:hover{transform:translateY(-3px);border-color:#d2b758;box-shadow:0 8px 18px #78602d1c}
+.tour-art{position:relative;z-index:1;display:grid;place-items:center;width:min(205px,76%);aspect-ratio:1;border-radius:50%;background:#fff8df;box-shadow:0 12px 28px #77602b17;transition:transform .25s cubic-bezier(.2,.8,.2,1.1)}
+.tour-art-button:hover .tour-art{transform:scale(1.06) rotate(-3deg)}
+.tour-art svg{width:78%;height:78%;overflow:visible;filter:drop-shadow(0 5px 3px #4a47302b)}
+.tour-art-prompt{position:relative;z-index:1;color:#856b2d;font:9px 'DM Mono',monospace;letter-spacing:.08em}
+.tour-art-prompt span{padding-left:4px;color:#4c9165;font-size:13px}
+.tour-copy{min-width:0;padding:6px 0}
+.tour-topic{display:inline-block;margin-bottom:8px;color:#9a7a31;font:10px 'DM Mono',monospace;letter-spacing:.13em}
+.tour-copy h2{max-width:15ch;margin:0 0 11px;color:#26394e;font-size:clamp(25px,3.2vw,36px);font-weight:900;letter-spacing:-.045em;line-height:1.08}
+.tour-copy p{max-width:52ch;margin:0;color:#667780;font-size:16px;line-height:1.65}
+.tour-highlights{display:grid;gap:8px;margin:17px 0 0;padding:0;list-style:none}
+.tour-highlights li{position:relative;padding:8px 10px 8px 31px;border:1px solid #e3e9dc;border-radius:11px;background:#f6f9f1;color:#52675a;font-size:12px;font-weight:800;line-height:1.4}
+.tour-highlights li:before{position:absolute;left:11px;top:8px;color:#d1a840;content:"✦";font-size:13px}
+.tour-step-nav{display:flex;align-items:center;justify-content:center;gap:9px;min-height:22px}
+.tour-step-dot{display:grid;place-items:center;width:27px;height:27px;padding:0;border:1px solid #dce3d6;border-radius:50%;background:#fff;color:#6b7b6d;font-size:10px;font-weight:900;cursor:pointer;transition:transform .18s,background .18s,border .18s}
+.tour-step-dot:hover{transform:scale(1.12)}
+.tour-step-dot.is-active{border-color:#528d64;background:#5da974;color:#fff;box-shadow:0 0 0 3px #6cba7d30}
+.tour-controls{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.tour-control-pair{display:flex;align-items:center;gap:9px}
+.tour-skip,.tour-back,.tour-next{display:flex;align-items:center;justify-content:center;gap:9px;min-height:46px;padding:10px 15px;border:1px solid #d9e1d7;border-radius:12px;font-size:12px;font-weight:900;cursor:pointer;transition:transform .17s,background .17s,border .17s,box-shadow .17s}
+.tour-skip{min-height:50px;border:2px solid #a77d1a;background:#fff1b8;color:#47370d;box-shadow:0 3px 0 #d4b04d}
+.tour-skip:hover{transform:translateY(-2px);background:#ffe998;box-shadow:0 5px 0 #d4b04d}
+.tour-back{background:#fff;color:#637269}
+.tour-back:hover:not(:disabled){transform:translateY(-1px);border-color:#a7bda5;background:#f4f8ef}
+.tour-next{min-width:138px;border-color:#398a5e;background:linear-gradient(135deg,#55b978,#369d65);box-shadow:0 3px 0 #287b50;color:#fff}
+.tour-next:hover{transform:translateY(-2px);box-shadow:0 5px 0 #287b50}
+.tour-back:disabled{opacity:.45;cursor:not-allowed}
+.tour-skip:focus-visible,.tour-back:focus-visible,.tour-next:focus-visible,.tour-step-dot:focus-visible,.tour-art-button:focus-visible{outline:3px solid #1b66b1;outline-offset:3px}
+@keyframes tour-card-arrive{from{opacity:.5;transform:translateY(7px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+body.high-contrast .guide-link{border:2px solid #111;background:#fff;color:#111}
+body.high-contrast .tour-dialog{border:2px solid #111;background:#fff;box-shadow:0 18px 0 #111}
+body.high-contrast .tour-dialog:before,body.high-contrast .tour-dialog:after{display:none}
+body.high-contrast .tour-card,body.high-contrast .tour-art-button{border:2px solid #111;background:#fff;color:#111}
+body.high-contrast :is(.tour-eyebrow,.tour-counter,.tour-topic,.tour-copy h2,.tour-copy p,.tour-highlights li,.tour-art-prompt){color:#111!important}
+body.high-contrast .tour-highlights li{border:2px solid #111;background:#fff}
+body.high-contrast .tour-step-dot{border:2px solid #111;background:#fff;color:#111}
+body.high-contrast .tour-step-dot.is-active,body.high-contrast .tour-next{border:2px solid #111;background:#243447;color:#fff}
+body.high-contrast .tour-skip{border:2px solid #111;background:#ffec99;color:#111;box-shadow:0 3px 0 #111}
+@media(max-width:700px){.tour-dialog{gap:14px;max-height:calc(100dvh - 20px);padding:15px;border-radius:22px}.tour-card{grid-template-columns:1fr;gap:17px;min-height:0;padding:15px}.tour-art-button{grid-template-columns:92px minmax(0,1fr);justify-items:start;min-height:112px;padding:12px;gap:12px}.tour-art-button:before{inset:7px}.tour-art{width:88px}.tour-art-prompt{text-align:left;font-size:8px}.tour-copy h2{max-width:20ch;font-size:27px}.tour-copy p{font-size:15px}.tour-highlights{grid-template-columns:1fr;margin-top:12px}.tour-controls{align-items:stretch;flex-direction:column-reverse;gap:10px}.tour-skip{width:100%;order:2}.tour-control-pair{justify-content:space-between}.tour-next{flex:1}}
+@media(max-width:390px){.tour-dialog{padding:12px}.tour-header{gap:8px}.tour-progress-track{width:80px}.tour-card{padding:12px}.tour-art-button{grid-template-columns:70px minmax(0,1fr);min-height:94px;padding:9px}.tour-art{width:68px}.tour-art-prompt{font-size:7px}.tour-copy h2{font-size:24px}.tour-copy p{font-size:14px}.tour-highlights li{font-size:11px}.tour-skip,.tour-back,.tour-next{min-height:42px;padding:8px 11px;font-size:11px}.tour-next{min-width:110px}}
+
+/* Movimientos de checkpoints, paradas y recompensas. */
+.checkpoint-nav{position:relative;z-index:2}
+.checkpoint{position:relative;overflow:visible;transform-origin:center;transition:transform .24s cubic-bezier(.2,.8,.25,1.2),border-color .22s,background .22s,box-shadow .22s,filter .22s}
+.checkpoint.active{z-index:1;transform:translateY(-1px) scale(1.04);border-color:#9fc48e;background:linear-gradient(145deg,#f5fbe9,#e8f4dd);box-shadow:0 4px 0 #c8dfb9,0 0 0 4px #9dc98838;animation:checkpoint-arrive .62s cubic-bezier(.16,1.3,.3,1) both}
+.checkpoint.active i{display:inline-block;transform-origin:center;animation:checkpoint-icon-pop .58s cubic-bezier(.2,1.4,.3,1) both}
+.checkpoint.visited:not(.active){animation:checkpoint-visited .62s cubic-bezier(.16,1.25,.3,1) both}
+.checkpoint.visited:after{position:absolute;top:-7px;right:-6px;z-index:2;display:grid;place-items:center;width:18px;height:18px;border:2px solid #fff;border-radius:50%;background:#62a66f;color:#fff;content:'✓';box-shadow:0 2px 5px #34573e49;font-size:10px;font-weight:900;pointer-events:none;animation:checkpoint-badge-pop .42s cubic-bezier(.18,1.5,.35,1) both}
+.checkpoint.active.visited{animation:checkpoint-achievement .76s cubic-bezier(.16,1.3,.3,1) both}
+.checkpoint.active.visited:after{border-color:#fffbe5;background:#d5a638;color:#fff;box-shadow:0 2px 7px #70582355}
+.checkpoint:hover:not(:disabled),.checkpoint:focus-visible{z-index:3;transform:translateY(-3px) scale(1.065);border-color:#8ebf8e;box-shadow:0 6px 0 #c8dfb9,0 9px 18px #547c4b22;filter:saturate(1.08)}
+.checkpoint:active:not(:disabled){transform:translateY(1px) scale(.96)}
+.progress-stop.is-done{transform:scale(1.42);box-shadow:0 0 0 3px #f5d77e,0 0 13px #e8b84490;animation:progress-stop-unlock .62s cubic-bezier(.16,1.4,.3,1) both}
+.honey-segment.is-filled{animation:honey-fill-pop .56s cubic-bezier(.18,1.45,.32,1) both}
+.chest-unsealing{animation:chest-unseal .82s cubic-bezier(.18,1.45,.32,1) both}
+.chest-unsealing .chest-art{animation:chest-burst .82s cubic-bezier(.18,.8,.25,1) both}
+.cell.chest-unsealing:before{position:absolute;top:4px;right:7px;z-index:3;color:#fff7cc;content:'✦';font-size:15px;text-shadow:-24px 19px 0 #f1b83e,18px 22px 0 #ef8f91,-16px -15px 0 #fff;pointer-events:none;animation:chest-spark-burst .82s ease-out both}
+.discovery-card.show .discovery-content{animation:discovery-arrive .68s cubic-bezier(.16,1.25,.3,1) both}
+.discovery-card.complete .discovery-art{animation:achievement-trophy 1.15s ease-in-out infinite alternate}
+.board.mission-complete .goal-reached{animation:final-stop-celebrate .9s cubic-bezier(.16,1.25,.3,1) .12s 2 both}
+.run-button:not(:disabled) .play-glyph{display:inline-block;animation:play-glyph-bob .9s ease-in-out infinite alternate}
+@keyframes checkpoint-arrive{0%{transform:translateY(6px) scale(.88)}48%{transform:translateY(-5px) scale(1.13)}74%{transform:translateY(1px) scale(.98)}100%{transform:translateY(-1px) scale(1.04)}}
+@keyframes checkpoint-visited{0%{transform:scale(.88) rotate(-2deg)}55%{transform:scale(1.11) rotate(1.5deg);box-shadow:0 0 0 5px #f5d77e88}100%{transform:scale(1);box-shadow:0 0 0 0 transparent}}
+@keyframes checkpoint-achievement{0%{transform:scale(.9)}48%{transform:translateY(-5px) scale(1.14);box-shadow:0 0 0 7px #f2d06e88,0 5px 0 #c8dfb9}76%{transform:translateY(1px) scale(.99)}100%{transform:translateY(-1px) scale(1.04)}}
+@keyframes checkpoint-icon-pop{0%{transform:rotate(-16deg) scale(.7)}62%{transform:rotate(13deg) scale(1.35)}100%{transform:rotate(0) scale(1)}}
+@keyframes checkpoint-badge-pop{0%{opacity:0;transform:scale(0) rotate(-25deg)}70%{opacity:1;transform:scale(1.25) rotate(8deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes progress-stop-unlock{0%{transform:scale(.7)}55%{transform:scale(1.75)}100%{transform:scale(1.42)}}
+@keyframes honey-fill-pop{0%{transform:scale(.7) rotate(-12deg)}60%{transform:scale(1.28) rotate(5deg)}100%{transform:scale(1.08) rotate(0)}}
+@keyframes chest-unseal{0%{transform:scale(1)}27%{transform:scale(1.36) rotate(-6deg);filter:brightness(1.22)}52%{transform:scale(.91) rotate(4deg)}76%{transform:scale(1.08) rotate(-1deg)}100%{transform:scale(1);filter:none}}
+@keyframes chest-burst{0%{transform:translateY(0) scale(1)}38%{transform:translateY(-17px) scale(1.45) rotate(12deg)}100%{transform:translateY(-7px) scale(.58);opacity:0}}
+@keyframes chest-spark-burst{0%{opacity:0;transform:scale(.15) rotate(-40deg)}32%{opacity:1;transform:scale(1.5) rotate(18deg)}100%{opacity:0;transform:scale(.65) rotate(70deg)}}
+@keyframes discovery-arrive{0%{opacity:0;transform:translateY(34px) scale(.82) rotate(-2deg)}62%{opacity:1;transform:translateY(-8px) scale(1.045) rotate(.5deg)}82%{transform:translateY(2px) scale(.99)}100%{transform:translateY(0) scale(1) rotate(0)}}
+@keyframes achievement-trophy{to{transform:translateY(-4px) scale(1.1) rotate(3deg);filter:drop-shadow(0 6px 7px #b98a314d)}}
+@keyframes final-stop-celebrate{0%,100%{transform:scale(1)}42%{transform:scale(1.13);box-shadow:inset 0 -5px #e3c970,0 0 0 7px #ffe78b,0 0 28px #f4cf61b3}70%{transform:scale(.98)}}
+@keyframes play-glyph-bob{to{transform:translateX(3px) scale(1.12)}}
+body.high-contrast .checkpoint.visited:after{border:2px solid #111;background:#ffec99;color:#111;box-shadow:0 1px 0 #111}
+@media(prefers-reduced-motion:reduce){body:not(.force-motion) .checkpoint,body:not(.force-motion) .checkpoint:after,body:not(.force-motion) .checkpoint i,body:not(.force-motion) .progress-stop,body:not(.force-motion) .honey-segment,body:not(.force-motion) .chest-unsealing,body:not(.force-motion) .chest-unsealing:before,body:not(.force-motion) .chest-unsealing .chest-art,body:not(.force-motion) .discovery-content,body:not(.force-motion) .discovery-art,body:not(.force-motion) .goal-reached,body:not(.force-motion) .play-glyph,body.reduce-motion .checkpoint,body.reduce-motion .checkpoint:after,body.reduce-motion .checkpoint i,body.reduce-motion .progress-stop,body.reduce-motion .honey-segment,body.reduce-motion .chest-unsealing,body.reduce-motion .chest-unsealing:before,body.reduce-motion .chest-unsealing .chest-art,body.reduce-motion .discovery-content,body.reduce-motion .discovery-art,body.reduce-motion .goal-reached,body.reduce-motion .play-glyph{animation:none!important;transition:none!important}}

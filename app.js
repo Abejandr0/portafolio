@@ -67,7 +67,13 @@ let draggedIndex = null;
 let discoveryResolver = null;
 let lastPlayerCell = null;
 let previousFocus = null;
+let hasSeenWelcomeTour = false;
+let welcomeTourIndex = 0;
+let welcomeTourReturnFocus = null;
+let welcomeTouchStart = null;
+let suppressWelcomeArtClick = false;
 const visualSettings = {textScale:0,highContrast:false,reduceMotion:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false};
+try{hasSeenWelcomeTour=localStorage.getItem('sendero-welcome-seen')==='true'}catch{/* La guía aparece si el navegador no permite guardar esta preferencia. */}
 try {
   const savedSettings=JSON.parse(localStorage.getItem('sendero-visual-settings')||'{}');
   if(Number.isInteger(savedSettings.textScale))visualSettings.textScale=Math.max(0,Math.min(2,savedSettings.textScale));
@@ -107,6 +113,44 @@ function showDiscovery(){
   card.classList.add('show');
   $('#closeDiscovery').focus();
 }
+const welcomeTourSteps=[
+  {topic:'BIENVENIDO',title:'El Sendero del polen',description:'Un portafolio que también se juega: explora mi trabajo mientras programas el vuelo de una abeja.',art:'bee',highlights:['Sigue el sendero a tu ritmo.','Cada cofre revela una parte del portafolio.']},
+  {topic:'ACCESOS DIRECTOS',title:'Elige dónde empezar',description:'Los botones del mapa te llevan directo a Sobre mí, Habilidades, Proyectos, Mis intereses, Inspiración o Contacto. Cada uno abre esa sección sin jugar primero.',art:'flag',highlights:['Elige una sección cuando quieras saltar a una parte concreta.','Si prefieres la aventura completa, puedes jugar el reto del mapa.']},
+  {topic:'PROGRAMA Y PRUEBA',title:'Toca bloques para crear una ruta',description:'Añade instrucciones con un toque, ordénalas con las flechas y pulsa “Ejecutar ruta”. También puedes arrastrar los bloques.',art:'spark',highlights:['La abeja sigue la secuencia de arriba hacia abajo.','El búho puede darte una pista cuando la necesites.']},
+  {topic:'A TU MANERA',title:'Ajusta la experiencia',description:'Explora sin afán y cambia la forma en que ves el juego desde las opciones sobre el mapa.',art:'chest',highlights:['A− y A+ amplían la interfaz.','Activa más contraste o reduce las animaciones.']}
+];
+function renderWelcomeTourStep(index){
+  welcomeTourIndex=Math.max(0,Math.min(welcomeTourSteps.length-1,index));
+  const step=welcomeTourSteps[welcomeTourIndex];
+  const card=$('#tourCard');card.classList.remove('is-changing');void card.offsetWidth;card.classList.add('is-changing');
+  $('#tourCounter').textContent=`PASO ${welcomeTourIndex+1} DE ${welcomeTourSteps.length}`;
+  $('#tourTopic').textContent=step.topic;$('#tourTitle').textContent=step.title;$('#tourDescription').textContent=step.description;
+  $('#tourArt').innerHTML=artMarkup(step.art);
+  const isLastTourStep=welcomeTourIndex===welcomeTourSteps.length-1;
+  $('#tourArtButton').setAttribute('aria-label',isLastTourStep?'Empezar la aventura':`Siguiente consejo: ${welcomeTourSteps[welcomeTourIndex+1].title}`);
+  $('#tourArtPromptText').textContent=isLastTourStep?'TOCA PARA EMPEZAR':'TOCA LA ILUSTRACIÓN PARA SEGUIR';
+  $('#tourHighlights').replaceChildren(...step.highlights.map(text=>{const item=document.createElement('li');item.textContent=text;return item}));
+  $('#tourProgress').style.width=`${((welcomeTourIndex+1)/welcomeTourSteps.length)*100}%`;
+  $('.tour-progress-track').setAttribute('aria-valuenow',String(welcomeTourIndex+1));
+  $('#tourPrevious').disabled=welcomeTourIndex===0;
+  $('#tourNext').innerHTML=welcomeTourIndex===welcomeTourSteps.length-1?'Empezar a jugar <span aria-hidden="true">→</span>':'Siguiente <span aria-hidden="true">→</span>';
+  const keepStepFocus=document.activeElement?.classList.contains('tour-step-dot');
+  $('#tourStepNav').replaceChildren(...welcomeTourSteps.map((item,stepIndex)=>{const button=document.createElement('button');button.type='button';button.className=`tour-step-dot${stepIndex===welcomeTourIndex?' is-active':''}`;button.setAttribute('aria-label',`Ir al paso ${stepIndex+1}: ${item.title}`);if(stepIndex===welcomeTourIndex)button.setAttribute('aria-current','step');button.textContent=String(stepIndex+1);button.addEventListener('click',()=>renderWelcomeTourStep(stepIndex));return button}));
+  if(keepStepFocus)$(`#tourStepNav .tour-step-dot:nth-child(${welcomeTourIndex+1})`).focus();
+}
+function openWelcomeTour(){
+  if(isRunning||$('#discoveryCard').classList.contains('show'))return;
+  welcomeTourReturnFocus=document.activeElement===document.body?null:document.activeElement;
+  $('.game-shell').inert=true;document.body.classList.add('welcome-tour-open');
+  const tour=$('#welcomeTour');tour.hidden=false;welcomeTourIndex=0;renderWelcomeTourStep(0);$('#tourSkip').focus();
+}
+function closeWelcomeTour(focusTarget){
+  const tour=$('#welcomeTour');if(tour.hidden)return;
+  tour.hidden=true;$('.game-shell').inert=false;document.body.classList.remove('welcome-tour-open');hasSeenWelcomeTour=true;
+  try{localStorage.setItem('sendero-welcome-seen','true')}catch{/* La guía seguirá siendo accesible desde el botón superior. */}
+  const target=focusTarget||welcomeTourReturnFocus||$('#replayWelcomeTour');welcomeTourReturnFocus=null;target?.focus();
+}
+function advanceWelcomeTour(){if(welcomeTourIndex===welcomeTourSteps.length-1)closeWelcomeTour($('#blockPalette .palette-block'));else renderWelcomeTourStep(welcomeTourIndex+1)}
 function beeMarkup(){return `<svg class="bee-svg" viewBox="0 0 72 72" role="img" aria-label="Abeja exploradora">
   <path class="bee-wing wing-a" d="M25 31C19 18 9 17 8 25c-1 7 5 13 16 16l5-3Zm22 0c6-13 16-14 17-6 1 7-5 13-16 16l-5-3Z" fill="#d8f4f2" stroke="#87c9d0" stroke-width="1.5" stroke-linejoin="round"/>
   <path d="M22 34c-1-7 5-11 14-11s15 4 14 11c2 8 2 17-1 25-2 6-7 10-13 12-6-2-11-6-13-12-3-8-3-17-1-25Z" fill="#f8c742"/>
@@ -200,8 +244,12 @@ function updateProgress(){
   const count=opened.size,total=chests.length;$('#progressText').textContent=`${count} / ${total}`;
   $('#missionCount').innerHTML=`${count} <i>/ ${total}</i>`;
   $('#missionCount').setAttribute('aria-label',`${count} de ${total} paradas descubiertas`);
-  $('#honeyTrack').replaceChildren(...Array.from({length:total},(_,i)=>{const segment=document.createElement('span');segment.className=`honey-segment${opened.has(i)?' is-filled':''}`;segment.setAttribute('aria-label',`Cofre ${i+1}${opened.has(i)?' descubierto':' pendiente'}`);return segment}));
-  $('#progressRail').replaceChildren(...chests.map((_,i)=>{const node=document.createElement('span');node.className=`progress-stop${opened.has(i)?' is-done':''}`;node.innerHTML='<i></i>';node.setAttribute('aria-label',`Checkpoint ${i+1}${opened.has(i)?' completado':' pendiente'}`);return node}));
+  const honeyTrack=$('#honeyTrack');
+  if(honeyTrack.children.length!==total)honeyTrack.replaceChildren(...Array.from({length:total},()=>document.createElement('span')));
+  [...honeyTrack.children].forEach((segment,index)=>{const discovered=opened.has(index);segment.classList.add('honey-segment');segment.classList.toggle('is-filled',discovered);segment.setAttribute('aria-label',`Cofre ${index+1}${discovered?' descubierto':' pendiente'}`)});
+  const progressRail=$('#progressRail');
+  if(progressRail.children.length!==total)progressRail.replaceChildren(...chests.map(()=>{const node=document.createElement('span');node.className='progress-stop';node.innerHTML='<i></i>';return node}));
+  [...progressRail.children].forEach((node,index)=>{const discovered=opened.has(index);node.classList.toggle('is-done',discovered);node.setAttribute('aria-label',`Checkpoint ${index+1}${discovered?' completado':' pendiente'}`)});
   $('#stepsText').textContent=steps;
   $$('.checkpoint').forEach(button=>{const point=checkpoints[button.dataset.checkpoint];const active=(point.x===player.x&&point.y===player.y)||(button.dataset.checkpoint==='start'&&steps===0&&opened.size===0);button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');const index=chests.findIndex(chest=>chest.x===point.x&&chest.y===point.y);const visited=index>=0&&opened.has(index);button.classList.toggle('visited',visited);button.setAttribute('aria-label',`${$('span',button).textContent}${visited?' · parada descubierta':''}`)});
 }
@@ -251,6 +299,13 @@ $('#runButton').addEventListener('click',execute);
 $('#resetButton').addEventListener('click',()=>{if(isRunning)return;player={...spawn};commands=[];opened.clear();steps=0;lastPlayerCell=null;renderCommands();renderBoard();updateProgress();updateMapStatus();$('#discoveryCard').classList.remove('show','complete');$('#assistant').classList.add('show');advice('¡Listos para jugar!','Programa el vuelo y encuentra las seis paradas del sendero.')});
 $$('.checkpoint').forEach(button=>button.addEventListener('click',()=>jumpCheckpoint(button.dataset.checkpoint)));
 $('#hintButton').addEventListener('click',giveHint);
+$('#replayWelcomeTour').addEventListener('click',openWelcomeTour);
+$('#tourSkip').addEventListener('click',()=>closeWelcomeTour());
+$('#tourPrevious').addEventListener('click',()=>renderWelcomeTourStep(welcomeTourIndex-1));
+$('#tourNext').addEventListener('click',advanceWelcomeTour);
+$('#tourArtButton').addEventListener('click',()=>{if(suppressWelcomeArtClick){suppressWelcomeArtClick=false;return}advanceWelcomeTour()});
+$('#tourCard').addEventListener('touchstart',event=>{welcomeTouchStart={x:event.changedTouches[0].clientX,y:event.changedTouches[0].clientY,startedOnArt:Boolean(event.target.closest('#tourArtButton'))}},{passive:true});
+$('#tourCard').addEventListener('touchend',event=>{if(!welcomeTouchStart)return;const gesture=welcomeTouchStart,dx=event.changedTouches[0].clientX-gesture.x,dy=event.changedTouches[0].clientY-gesture.y;welcomeTouchStart=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.25){if(gesture.startedOnArt){event.preventDefault();suppressWelcomeArtClick=true;window.setTimeout(()=>{suppressWelcomeArtClick=false},80)}renderWelcomeTourStep(welcomeTourIndex+(dx<0?1:-1))}},{passive:false});
 $('#portfolioButton').addEventListener('click',()=>{$('#discoveryKicker').textContent='PORTAFOLIO';$('#discoveryTitle').textContent='¡Hola! Soy Alejandro';$('#discoveryText').textContent='Estudiante de Ingeniería de Software en la Universidad Cooperativa de Colombia, con interés en ciberseguridad, motos y abejas. Explora mis proyectos y encuéntrame en Instagram o GitHub.';$('#discoveryArt').innerHTML=artMarkup('bee');$('#discoveryBadge').hidden=true;renderHighlights([]);$('#discoveryCard').setAttribute('aria-describedby','discoveryText');renderLinks([...projectLinks,...contactLinks]);$('#discoveryCard').classList.remove('complete');showDiscovery()});
 $('#textDecreaseButton').addEventListener('click',()=>{visualSettings.textScale=Math.max(0,visualSettings.textScale-1);applyVisualSettings(true)});
 $('#textIncreaseButton').addEventListener('click',()=>{visualSettings.textScale=Math.min(2,visualSettings.textScale+1);applyVisualSettings(true)});
@@ -262,6 +317,20 @@ function closeDiscovery(){ $('#discoveryCard').classList.remove('show');restoreD
 $('#closeDiscovery').addEventListener('click',closeDiscovery);$('#continueDiscovery').addEventListener('click',closeDiscovery);$('#discoveryCard').addEventListener('click',event=>{if(event.target.id==='discoveryCard')closeDiscovery()});
 workspace.addEventListener('keydown',event=>{if(event.target!==workspace)return;if(event.key==='Enter'||event.key===' '){event.preventDefault();execute()}});
 window.addEventListener('keydown',event=>{
+  const tour=$('#welcomeTour');
+  if(!tour.hidden){
+    if(event.key==='Escape'){event.preventDefault();closeWelcomeTour();return}
+    if(event.key==='ArrowRight'){event.preventDefault();advanceWelcomeTour();return}
+    if(event.key==='ArrowLeft'){event.preventDefault();renderWelcomeTourStep(welcomeTourIndex-1);return}
+    if(event.key==='Tab'){
+      const focusable=[...tour.querySelectorAll('button:not([disabled]),a[href]')];
+      if(!focusable.length){event.preventDefault();$('#tourSkip').focus();return}
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+    }
+    return;
+  }
   const card=$('#discoveryCard');if(!card.classList.contains('show'))return;
   if(event.key==='Escape'){event.preventDefault();closeDiscovery();return}
   if(event.key==='Tab'){
@@ -275,3 +344,4 @@ window.addEventListener('keydown',event=>{
 window.addEventListener('resize',updateCamera);
 applyVisualSettings();
 buildBoard();renderBoard();renderCommands();updateProgress();updateMapStatus();$('#assistant').classList.add('show');
+if(!hasSeenWelcomeTour)window.setTimeout(()=>{if(!hasSeenWelcomeTour&&$('#welcomeTour').hidden)openWelcomeTour()},220);

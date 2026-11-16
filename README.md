@@ -4,6 +4,7 @@ Portafolio web presentado como un juego 2D de exploración y programación visua
 
 ## Controles
 
+- En la primera visita aparece una guía de cuatro tarjetas ilustradas. Avanza con los botones, las flechas del teclado o deslizando; usa «Saltar guía y explorar el portafolio» para salir, o «¿Cómo funciona?» para volver a abrirla.
 - Usa los accesos directos «Sobre mí», «Habilidades», «Proyectos», «Mis intereses», «Inspiración» y «Contacto» para abrir una sección al instante, sin programar ni recorrer el mapa.
 - Arrastra bloques de la paleta al programa (o actívalos con teclado o toque). En cada bloque puedes usar las flechas para cambiar su orden y el botón «Quitar» para eliminarlo; también se pueden reordenar y borrar con arrastre.
 - Ejecuta una secuencia para mover la abeja por el sendero ascendente, saltar, girar y abrir cofres.

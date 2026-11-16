@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f4f4eb" />
   <meta name="description" content="Portafolio interactivo de Alejandro, con enfoque en juegos para niños, gamificación y experiencias accesibles." />
   <title>Sendero del polen — Portafolio de Alejandro</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -87,17 +88,17 @@
   <section class="welcome-tour" id="welcomeTour" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-describedby="tourDescription" hidden>
     <div class="tour-dialog">
       <header class="tour-header">
-        <div><span class="tour-eyebrow">GUÍA INTERACTIVA</span><span class="tour-counter" id="tourCounter">PASO 1 DE 4</span></div>
+        <div><span class="tour-eyebrow">GUÍA INTERACTIVA</span><span class="tour-counter" id="tourCounter" aria-live="polite">PASO 1 DE 4</span></div>
         <div class="tour-progress-track" role="progressbar" aria-label="Progreso de la guía" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><span id="tourProgress"></span></div>
       </header>
       <div class="tour-card" id="tourCard">
         <button class="tour-art-button" id="tourArtButton" type="button" aria-label="Avanzar al siguiente consejo">
           <span class="tour-art" id="tourArt" aria-hidden="true"></span>
-          <span class="tour-art-prompt">TOCA LA ILUSTRACIÓN PARA SEGUIR <span aria-hidden="true">↗</span></span>
+          <span class="tour-art-prompt"><span id="tourArtPromptText">TOCA LA ILUSTRACIÓN PARA SEGUIR</span> <span aria-hidden="true">↗</span></span>
         </button>
         <div class="tour-copy">
           <span class="tour-topic" id="tourTopic">BIENVENIDO</span>
-          <h2 id="tourTitle">El Sendero del polen</h2>
+          <h2 id="tourTitle" aria-live="polite" aria-atomic="true">El Sendero del polen</h2>
           <p id="tourDescription">Un portafolio que también se juega.</p>
           <ul class="tour-highlights" id="tourHighlights"></ul>
         </div>
