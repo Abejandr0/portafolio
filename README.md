@@ -30,15 +30,3 @@ El recorrido presenta a Alejandro, estudiante de Ingeniería de Software en la U
 - [GitHub · Abejandr0](https://github.com/Abejandr0)
 
 Los bloques se ejecutan con un intérprete local que mueve la abeja sobre una cuadrícula vertical de un solo camino. La interfaz toma como referencia los bloques encajables de Scratch, sin cargar el editor externo ni requerir una cuenta o proyecto de Scratch. El búho ofrece pistas para guiar el recorrido.
-
-## Publicar en GitHub Pages
-
-El proyecto es una página estática y no necesita proceso de compilación. Los archivos `index.html`, `styles.css`, `app.js` y `favicon.svg` deben permanecer en la raíz del repositorio.
-
-1. Abre el repositorio `Abejandr0/portafolio` en GitHub y entra en **Settings**.
-2. En el menú lateral, abre **Pages**.
-3. En **Build and deployment**, elige **Deploy from a branch**.
-4. Selecciona la rama `main` y la carpeta `/(root)`; pulsa **Save**.
-5. Cuando termine la primera publicación, el portafolio estará en `https://abejandr0.github.io/portafolio/`.
-
-Cada cambio que subas a `main` iniciará una nueva publicación.
