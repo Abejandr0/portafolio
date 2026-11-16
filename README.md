@@ -29,26 +29,16 @@ El recorrido presenta a Alejandro, estudiante de Ingeniería de Software en la U
 - [Instagram · @alejojcastro](https://www.instagram.com/alejojcastro/)
 - [GitHub · Abejandr0](https://github.com/Abejandr0)
 
-Los bloques se ejecutan con un intérprete local que mueve la abeja sobre una cuadrícula vertical de un solo camino. La interfaz toma como referencia los bloques encajables de Scratch, sin cargar el editor externo ni requerir una cuenta o proyecto de Scratch. El búho da pistas locales mientras no haya endpoint de IA.
+Los bloques se ejecutan con un intérprete local que mueve la abeja sobre una cuadrícula vertical de un solo camino. La interfaz toma como referencia los bloques encajables de Scratch, sin cargar el editor externo ni requerir una cuenta o proyecto de Scratch. El búho ofrece pistas para guiar el recorrido.
 
-## Conectar la IA después del despliegue
+## Publicar en GitHub Pages
 
-`config.js` contiene `aiCoachEndpoint`, inicialmente vacío. Cuando exista un endpoint HTTPS de API Gateway/Lambda, asígnalo allí. El juego enviará al endpoint un `POST` JSON con `message`, coordenadas/dirección del personaje, cofres abiertos y pasos. La respuesta esperada es `{ "message": "Pista breve para el jugador" }`. Si el endpoint falla o sigue vacío, se conserva la pista local. La clave del proveedor debe permanecer en Lambda/Secrets Manager; nunca en `config.js`.
+El proyecto es una página estática y no necesita proceso de compilación. Los archivos `index.html`, `styles.css`, `app.js` y `favicon.svg` deben permanecer en la raíz del repositorio.
 
-## Publicar en AWS
+1. Abre el repositorio `Abejandr0/portafolio` en GitHub y entra en **Settings**.
+2. En el menú lateral, abre **Pages**.
+3. En **Build and deployment**, elige **Deploy from a branch**.
+4. Selecciona la rama `main` y la carpeta `/(root)`; pulsa **Save**.
+5. Cuando termine la primera publicación, el portafolio estará en `https://abejandr0.github.io/portafolio/`.
 
-Para una primera publicación se puede alojar como sitio estático en Amazon S3 y distribuirlo con CloudFront. Sube `index.html`, `styles.css`, `config.js` y `app.js` al origen S3, configura el documento predeterminado como `index.html` y habilita HTTPS mediante CloudFront. No se necesita proceso de compilación.
-
-Ejemplo de carga (reemplaza el bucket por el tuyo):
-
-```sh
-aws s3 sync . s3://TU-BUCKET --exclude '.git/*' --exclude 'README.md'
-```
-
-Para invalidar el caché después de publicar en CloudFront:
-
-```sh
-aws cloudfront create-invalidation --distribution-id TU_DISTRIBUTION_ID --paths '/*'
-```
-
-No publiques datos personales o secretos en los archivos estáticos; todo el contenido del frontend es público.
+Cada cambio que subas a `main` iniciará una nueva publicación.

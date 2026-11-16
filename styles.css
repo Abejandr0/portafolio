@@ -260,3 +260,211 @@ body.high-contrast .tour-skip{border:2px solid #111;background:#ffec99;color:#11
 @keyframes play-glyph-bob{to{transform:translateX(3px) scale(1.12)}}
 body.high-contrast .checkpoint.visited:after{border:2px solid #111;background:#ffec99;color:#111;box-shadow:0 1px 0 #111}
 @media(prefers-reduced-motion:reduce){body:not(.force-motion) .checkpoint,body:not(.force-motion) .checkpoint:after,body:not(.force-motion) .checkpoint i,body:not(.force-motion) .progress-stop,body:not(.force-motion) .honey-segment,body:not(.force-motion) .chest-unsealing,body:not(.force-motion) .chest-unsealing:before,body:not(.force-motion) .chest-unsealing .chest-art,body:not(.force-motion) .discovery-content,body:not(.force-motion) .discovery-art,body:not(.force-motion) .goal-reached,body:not(.force-motion) .play-glyph,body.reduce-motion .checkpoint,body.reduce-motion .checkpoint:after,body.reduce-motion .checkpoint i,body.reduce-motion .progress-stop,body.reduce-motion .honey-segment,body.reduce-motion .chest-unsealing,body.reduce-motion .chest-unsealing:before,body.reduce-motion .chest-unsealing .chest-art,body.reduce-motion .discovery-content,body.reduce-motion .discovery-art,body.reduce-motion .goal-reached,body.reduce-motion .play-glyph{animation:none!important;transition:none!important}}
+
+/* Mantiene el juego dentro del alto visible y reserva el scroll para sus zonas de trabajo. */
+html,body{height:100%;overflow:hidden}
+body{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+.game-shell{display:flex;height:100vh;height:100dvh;min-height:0;margin:0 auto;flex-direction:column;overflow:hidden;padding:clamp(6px,1.2vh,16px) clamp(10px,2.2vw,32px) clamp(5px,.8vh,12px)}
+.topbar{flex:none;min-height:58px;padding-bottom:9px}
+.game-layout{flex:1;min-height:0;overflow:hidden;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(10px,1.5vw,22px);padding:clamp(6px,1vh,12px) 0}
+.world-card,.workbench{height:100%;min-height:0;padding:clamp(9px,1.4vw,18px)}
+.world-card{gap:clamp(4px,.7vh,9px)}
+.world-card>.checkpoint-nav{flex:none;margin:6px 0}
+.world-card>.accessibility-tools{flex:none;margin:0 0 5px}
+.world-card>.map-frame{display:flex;min-height:0;flex:1;flex-direction:column}
+.map-window{height:auto;min-height:100px;flex:1}
+.workbench{overflow:hidden}
+.workbench-heading{flex:none;margin-bottom:8px}
+.coding-layout{min-height:0;flex:1}
+.block-palette,.code-panel{min-height:0}
+.workspace{min-height:0;max-height:none;flex:1}
+.page-footer{flex:none;padding-top:6px}
+
+@media(max-width:900px){.topbar{flex-wrap:wrap;gap:7px 12px}.brand{min-width:200px}.mission-progress{margin-left:auto}}
+@media(max-width:760px){
+  .game-shell{padding:7px 9px 5px}
+  .topbar{min-height:0;flex-wrap:wrap;gap:6px;padding-bottom:7px}
+  .brand{min-width:0;flex:1}
+  .mission-progress{order:4;flex:1 0 100%;justify-content:center;margin:0;padding:5px 8px}
+  .game-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:7px 0}
+  .world-card,.workbench{padding:9px;border-radius:15px}
+  .world-heading{gap:5px}
+  .world-heading h1{font-size:clamp(14px,2.6vw,19px)}
+  .world-heading p,.workbench-heading p{font-size:10px}
+  .weather-badge{gap:4px;padding:5px 6px;font-size:8px}
+  .checkpoint-nav{gap:4px;margin:5px 0}
+  .checkpoint{min-height:32px;padding:0 5px;font-size:9px}
+  .accessibility-tools{gap:4px}
+  .accessibility-tools button{min-height:28px;padding:4px 6px;font-size:9px}
+  .map-frame{padding:7px}
+  .map-window{min-height:80px}
+  .board{--tile:clamp(30px,5.2vw,40px);padding:8px 9%;gap:5px}
+  .cell{border-radius:10px}
+  .workbench-heading{gap:6px;margin-bottom:5px}
+  .workbench-heading h2{font-size:17px}
+  .drag-tip{padding:4px 5px;font-size:7px}
+  .coding-layout{grid-template-columns:minmax(105px,.4fr) minmax(0,.6fr);gap:6px}
+  .block-palette{padding:8px 7px}
+  .palette-block{min-height:37px;padding:5px;gap:4px}
+  .block-name{font-size:9px}
+  .palette-foot{font-size:8px}
+  .code-panel{padding:7px}
+  .workspace{padding:8px}
+  .start-block{min-height:35px;padding:6px 8px;font-size:9px}
+  .workspace-bottom{padding:5px 0 3px}
+  .trash-zone{padding:5px 7px}
+  .trash-icon{width:24px;height:24px}
+  .run-controls{gap:5px}
+  .run-button,.reset-button,.portfolio-button{min-height:34px;padding:0 7px;font-size:9px}
+  .assistant{margin-top:5px;padding:6px}
+  .assistant-avatar{width:28px;height:28px}
+  .page-footer{font-size:7px}
+}
+
+@media(max-width:600px){
+  .topbar{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-rows:auto auto;gap:5px;padding-bottom:6px}
+  .brand{grid-column:1;grid-row:1}
+  #replayWelcomeTour{grid-column:2;grid-row:1;min-height:32px;padding:5px 7px;font-size:9px}
+  .profile-link{grid-column:3;grid-row:1;margin:0;padding:6px 7px;font-size:8px}
+  .mission-progress{grid-column:1/-1;grid-row:2;width:max-content;max-width:100%;margin:0 auto;padding:4px 7px}
+  .game-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,.95fr) minmax(0,1.05fr);gap:6px}
+  .world-card,.workbench{padding:7px}
+  .world-heading p,.checkpoint-intro,.drag-tip{display:none}
+  .world-heading h1{font-size:16px}
+  .world-heading .eyebrow,.workbench-heading .eyebrow{font-size:8px}
+  .weather-badge{font-size:7px}
+  .checkpoint-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;margin:3px 0}
+  .checkpoint{justify-content:center;min-height:29px;padding:3px;font-size:9px}
+  .checkpoint i{font-size:11px}
+  .accessibility-tools{justify-content:flex-start;gap:3px;margin:1px 0 3px}
+  .accessibility-label{display:none}
+  .accessibility-tools button{min-height:25px;padding:3px 5px;font-size:8px}
+  .map-frame{padding:5px}
+  .map-topline{height:15px;padding:0 2px 3px;font-size:7px}
+  .map-window{min-height:44px;border-radius:8px}
+  .map-bottomline{height:23px;padding:3px 2px 0;font-size:8px}
+  .compass-rose{width:19px;height:19px;font-size:12px}
+  .path-progress{margin-top:2px;padding:4px 4px 0}
+  .progress-caption{font-size:7px}
+  .progress-rail{margin:5px 5px 3px;height:10px}
+  .progress-stop{width:10px;height:10px;border-width:2px}
+  .board{--tile:clamp(26px,7vw,38px);padding:6px 11%;gap:4px}
+  .cell{border-radius:8px}
+  .cell.path-sunlit:after{inset:2px;border-radius:6px}
+  .workbench-heading{margin-bottom:3px}
+  .workbench-heading h2{font-size:15px}
+  .coding-layout{grid-template-columns:minmax(98px,.39fr) minmax(0,.61fr);gap:4px}
+  .block-palette,.code-panel{padding:5px;border-radius:11px}
+  .palette-heading{margin-bottom:4px}
+  .palette-heading h3{font-size:11px}
+  .palette-list{gap:3px}
+  .palette-block{min-height:30px;padding:3px;gap:3px;border-radius:8px}
+  .palette-block:before{left:10px;width:15px}
+  .block-glyph{width:17px;height:17px;border-radius:5px;font-size:12px}
+  .block-name{font-size:8px;line-height:1.15}
+  .block-name small{font-size:6px}
+  .block-grip,.palette-foot{display:none}
+  .code-toolbar{min-height:18px;padding:0 2px 3px;font-size:7px}
+  .workspace{padding:5px;border-radius:8px}
+  .start-block{min-height:28px;padding:4px 5px;gap:4px;font-size:7px}
+  .flag-icon{width:16px;height:16px;border-radius:5px;font-size:10px}
+  .program-blocks{width:calc(100% - 6px);margin:6px 0 0 6px;gap:3px}
+  .program-block{min-height:25px;padding:3px;gap:3px;border-radius:6px;font-size:7px}
+  .sequence-glyph,.remove-block{width:17px;height:17px;border-radius:5px;font-size:10px}
+  .move-command-button{width:15px;height:15px;font-size:9px}
+  .sequence-actions{gap:1px}
+  .block-index{font-size:6px}
+  .drop-prompt{gap:2px}
+  .drop-orbit{width:23px;height:23px;font-size:15px}
+  .drop-prompt b{font-size:8px}
+  .drop-prompt small{font-size:7px}
+  .workspace-bottom{padding:3px 0 2px}
+  .trash-zone{gap:4px;padding:3px 5px;border-radius:8px}
+  .trash-icon{width:19px;height:19px;border-radius:6px}
+  .trash-icon svg{width:13px;height:13px}
+  .trash-zone b{font-size:7px}
+  .trash-zone small,.editor-note{display:none}
+  .run-controls{gap:3px}
+  .run-button,.reset-button,.portfolio-button{min-height:28px;padding:0 5px;border-radius:8px;font-size:7px}
+  .run-button{font-size:8px}
+  .assistant{gap:5px;margin-top:3px;padding:3px 5px}
+  .assistant-avatar{width:22px;height:22px;border-radius:7px}
+  .assistant-avatar svg{width:17px;height:17px}
+  .assistant b{font-size:8px}
+  .assistant p{font-size:7px;line-height:1.2}
+  .assistant>button{font-size:14px}
+  .page-footer{display:none}
+}
+
+@media(max-height:640px){
+  .game-shell{padding-top:4px;padding-bottom:3px}
+  .topbar{min-height:0;padding-bottom:4px}
+  .brand-mark{width:34px;height:34px}
+  .brand b{font-size:11px}
+  .brand small{font-size:7px}
+  .game-layout{gap:6px;padding:4px 0}
+  .world-card,.workbench{padding:7px}
+  .world-heading p,.checkpoint-intro,.workbench-heading p,.drag-tip{display:none}
+  .checkpoint-nav{margin:3px 0;gap:3px}
+  .checkpoint{min-height:27px;padding:2px 4px;font-size:8px}
+  .accessibility-tools{gap:3px;margin:0 0 3px}
+  .accessibility-label{display:none}
+  .accessibility-tools button{min-height:23px;padding:2px 4px;font-size:7px}
+  .map-frame{padding:5px}
+  .map-window{min-height:40px}
+  .map-topline{height:14px;padding-bottom:2px;font-size:7px}
+  .map-bottomline{height:21px;padding-top:2px;font-size:7px}
+  .path-progress{margin-top:1px;padding:3px 3px 0}
+  .progress-caption{font-size:6px}
+  .progress-rail{margin:4px 4px 2px;height:8px}
+  .progress-stop{width:8px;height:8px;border-width:1px}
+  .workbench-heading{margin-bottom:2px}
+  .workbench-heading h2{font-size:14px}
+  .coding-layout{min-height:0}
+  .palette-heading{margin-bottom:3px}
+  .palette-list{gap:2px}
+  .palette-block{min-height:25px;padding:2px;gap:2px}
+  .workspace{min-height:0;padding:4px}
+  .start-block{min-height:24px;padding:3px 4px;font-size:7px}
+  .workspace-bottom{padding:2px 0}
+  .trash-zone{padding:2px 4px}
+  .trash-icon{width:17px;height:17px}
+  .run-button,.reset-button,.portfolio-button{min-height:25px;padding:0 4px;font-size:7px}
+  .page-footer{display:none}
+}
+
+@media(max-width:380px){
+  .brand small{display:none}
+  .brand-mark{width:30px;height:30px}
+  .brand b{font-size:10px}
+  #replayWelcomeTour{font-size:8px}
+  .profile-link{font-size:7px}
+  .mission-label{font-size:7px}
+  .honey-segment{width:16px;height:15px}
+  .mission-count{min-width:30px;font-size:10px}
+  .checkpoint{font-size:8px}
+}
+
+/* La barra de accesibilidad comparte encabezado y el mapa recibe más área. */
+.topbar{gap:clamp(7px,.9vw,13px)}
+.topbar .accessibility-tools{flex:none;flex-wrap:nowrap;align-items:center;gap:4px;margin:0}
+.topbar .accessibility-label{flex:none;margin:0 2px 0 0;white-space:nowrap;font-size:8px;letter-spacing:.04em}
+.topbar .accessibility-tools button{min-height:30px;padding:4px 7px;font-size:9px;white-space:nowrap}
+.game-layout{grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr)}
+.world-card>.checkpoint-nav{margin:4px 0}
+@media(max-width:1300px){
+  .topbar{flex-wrap:wrap;gap:6px 10px}
+  .topbar .mission-progress{margin-left:auto}
+  .topbar .accessibility-tools{order:5;flex:1 0 100%;justify-content:flex-end}
+}
+@media(max-width:760px){
+  .topbar .accessibility-tools{order:5;flex:1 0 100%;justify-content:flex-end}
+  .topbar .accessibility-label{flex:none;margin-right:4px}
+  .game-layout{grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr)}
+}
+@media(max-width:600px){
+  .topbar{grid-template-rows:auto auto auto}
+  .topbar .accessibility-tools{grid-column:1/-1;grid-row:3;justify-content:center;flex:none;width:100%;gap:3px;margin:0}
+  .topbar .accessibility-label{display:none}
+  .game-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.05fr) minmax(0,.95fr)}
+}

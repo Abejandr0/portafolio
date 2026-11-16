@@ -20,13 +20,21 @@
         <span><b>Sendero del polen</b><small>PORTAFOLIO INTERACTIVO · ALEJANDRO</small></span>
       </a>
       <div class="mission-progress" role="group" aria-label="Progreso de paradas descubiertas"><span class="mission-label">MISIÓN <b>6 PARADAS</b></span><div class="honey-track" id="honeyTrack" aria-hidden="true"></div><span class="mission-count" id="missionCount">0 <i>/ 6</i></span></div>
+      <div class="accessibility-tools" role="group" aria-label="Opciones de visualización">
+        <span class="accessibility-label">AJUSTA LA EXPERIENCIA</span>
+        <button id="textDecreaseButton" type="button" aria-label="Reducir tamaño de la interfaz" title="Reducir tamaño">A−</button>
+        <button id="textIncreaseButton" type="button" aria-label="Aumentar tamaño de la interfaz" title="Aumentar tamaño">A+</button>
+        <button id="contrastButton" type="button" aria-pressed="false">Más contraste</button>
+        <button id="motionButton" type="button" aria-pressed="false">Reducir animaciones</button>
+        <span id="accessibilityStatus" class="sr-only" role="status" aria-live="polite"></span>
+      </div>
       <button class="guide-link" id="replayWelcomeTour" type="button" aria-label="Volver a ver la guía de inicio">¿Cómo funciona?</button>
       <a class="profile-link" href="https://github.com/Abejandr0" target="_blank" rel="noopener noreferrer">VER PERFIL <span>↗</span></a>
     </header>
 
     <div class="game-layout" id="juego">
       <section class="world-card" aria-label="Mapa del Sendero del polen">
-        <div class="world-heading"><div><span class="eyebrow">RETO CORTO · A TU RITMO</span><h1>El sendero del polen</h1><p>Un recorrido breve por mi formación, mis proyectos, mis intereses y lo que me inspira.</p></div><div class="weather-badge"><span class="sun-dot" aria-hidden="true"></span> BOSQUE · DÍA 01</div></div>
+        <div class="world-heading"><div><span class="eyebrow">RETO CORTO · A TU RITMO</span><h1>El sendero del polen</h1></div><div class="weather-badge"><span class="sun-dot" aria-hidden="true"></span> BOSQUE · DÍA 01</div></div>
         <nav class="checkpoint-nav" aria-label="Accesos directos a las secciones del portafolio">
           <div class="checkpoint-intro"><strong>¿Vienes a ver el portafolio?</strong><span>Elige una sección para abrirla al instante. No necesitas programar ni recorrer el mapa.</span></div>
           <button class="checkpoint active" data-checkpoint="start"><i aria-hidden="true">↟</i><span>Sobre mí</span></button>
@@ -36,14 +44,6 @@
           <button class="checkpoint" data-checkpoint="ideas"><i aria-hidden="true">✧</i><span>Inspiración</span></button>
           <button class="checkpoint" data-checkpoint="finish"><i aria-hidden="true">✦</i><span>Contacto</span></button>
         </nav>
-        <div class="accessibility-tools" role="group" aria-label="Opciones de visualización">
-          <span class="accessibility-label">AJUSTA LA EXPERIENCIA</span>
-          <button id="textDecreaseButton" type="button" aria-label="Reducir tamaño de la interfaz" title="Reducir tamaño">A−</button>
-          <button id="textIncreaseButton" type="button" aria-label="Aumentar tamaño de la interfaz" title="Aumentar tamaño">A+</button>
-          <button id="contrastButton" type="button" aria-pressed="false">Más contraste</button>
-          <button id="motionButton" type="button" aria-pressed="false">Reducir animaciones</button>
-          <span id="accessibilityStatus" class="sr-only" role="status" aria-live="polite"></span>
-        </div>
         <div class="map-frame">
           <div class="map-topline"><span><i class="online-dot"></i> SENDERO ACTIVO</span><span id="mapAltitude">ALT. 00 M</span></div>
           <div class="map-window" id="mapViewport" role="img" aria-label="Mapa visual del sendero y de la abeja" aria-describedby="mapStatus"><div class="board" id="board" aria-hidden="true"></div><div class="map-vignette" aria-hidden="true"></div></div>
@@ -112,6 +112,6 @@
   </section>
 
   <section class="discovery-card" id="discoveryCard" aria-labelledby="discoveryTitle" aria-describedby="discoveryBadge discoveryText discoveryHighlights"><div class="discovery-content"><div class="discovery-art" id="discoveryArt" aria-hidden="true">✦</div><div class="discovery-copy"><span class="discovery-kicker" id="discoveryKicker">COFRE DESCUBIERTO</span><div class="discovery-badge" id="discoveryBadge" hidden></div><h2 id="discoveryTitle">¡Hola!</h2><p id="discoveryText"></p><ul id="discoveryHighlights" class="discovery-highlights" hidden></ul><div id="discoveryLinks" class="discovery-links"></div><div class="discovery-actions"><button id="continueDiscovery" type="button">Continuar <span aria-hidden="true">→</span></button></div></div><button id="closeDiscovery" aria-label="Cerrar ventana">×</button></div></section>
-  <script src="config.js"></script><script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
