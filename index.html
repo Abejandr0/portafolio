@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f4f4eb" />
-  <meta name="description" content="Programa el vuelo de una abeja y descubre el portafolio de Alejandro." />
+  <meta name="description" content="Portafolio interactivo de Alejandro, con enfoque en juegos para niños, gamificación y experiencias accesibles." />
   <title>Sendero del polen — Portafolio de Alejandro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,47 +18,58 @@
         <span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 35 11.5v17L20 37 5 28.5v-17L20 3Z"/><path class="mark-wing" d="M14 14c-6-6-10 2-3 6M26 14c6-6 10 2 3 6"/><ellipse cx="20" cy="21" rx="8" ry="6"/><path d="M17 15v12m6-12v12"/><circle cx="27" cy="20" r="1"/></svg></span>
         <span><b>Sendero del polen</b><small>PORTAFOLIO INTERACTIVO · ALEJANDRO</small></span>
       </a>
-      <div class="mission-progress" aria-label="Progreso de cofres"><span class="mission-label">MISIÓN <b>6 COFRES</b></span><div class="honey-track" id="honeyTrack"></div><span class="mission-count" id="missionCount">0 <i>/ 6</i></span></div>
+      <div class="mission-progress" role="group" aria-label="Progreso de paradas descubiertas"><span class="mission-label">MISIÓN <b>6 PARADAS</b></span><div class="honey-track" id="honeyTrack" aria-hidden="true"></div><span class="mission-count" id="missionCount">0 <i>/ 6</i></span></div>
+      <button class="guide-link" id="replayWelcomeTour" type="button" aria-label="Volver a ver la guía de inicio">¿Cómo funciona?</button>
       <a class="profile-link" href="https://github.com/Abejandr0" target="_blank" rel="noopener noreferrer">VER PERFIL <span>↗</span></a>
     </header>
 
     <div class="game-layout" id="juego">
       <section class="world-card" aria-label="Mapa del Sendero del polen">
-        <div class="world-heading"><div><span class="eyebrow">NIVEL ÚNICO · 3 MIN</span><h1>El sendero del polen</h1><p>Sube por el bosque. Cada parada guarda algo de mi mundo.</p></div><div class="weather-badge"><span class="sun-dot"></span> BOSQUE · DÍA 01</div></div>
-        <nav class="checkpoint-nav" aria-label="Saltar a un checkpoint">
-          <span class="checkpoint-caption">ATAJOS A LOS COFRES · TOCA PARA ABRIR</span>
-          <button class="checkpoint active" data-checkpoint="start"><i>↟</i><span>Inicio</span></button>
-          <button class="checkpoint" data-checkpoint="skills"><i>✳</i><span>Skills</span></button>
-          <button class="checkpoint" data-checkpoint="projects"><i>◇</i><span>Proyectos</span></button>
-          <button class="checkpoint" data-checkpoint="process"><i>⌁</i><span>Proceso</span></button>
-          <button class="checkpoint" data-checkpoint="ideas"><i>✧</i><span>Ideas</span></button>
-          <button class="checkpoint" data-checkpoint="finish"><i>⚑</i><span>Meta</span></button>
+        <div class="world-heading"><div><span class="eyebrow">RETO CORTO · A TU RITMO</span><h1>El sendero del polen</h1><p>Un recorrido breve por mi formación, mis proyectos, mis intereses y lo que me inspira.</p></div><div class="weather-badge"><span class="sun-dot" aria-hidden="true"></span> BOSQUE · DÍA 01</div></div>
+        <nav class="checkpoint-nav" aria-label="Accesos directos a las secciones del portafolio">
+          <div class="checkpoint-intro"><strong>¿Vienes a ver el portafolio?</strong><span>Elige una sección para abrirla al instante. No necesitas programar ni recorrer el mapa.</span></div>
+          <button class="checkpoint active" data-checkpoint="start"><i aria-hidden="true">↟</i><span>Sobre mí</span></button>
+          <button class="checkpoint" data-checkpoint="skills"><i aria-hidden="true">✳</i><span>Habilidades</span></button>
+          <button class="checkpoint" data-checkpoint="projects"><i aria-hidden="true">◇</i><span>Proyectos</span></button>
+          <button class="checkpoint" data-checkpoint="interests"><i aria-hidden="true">⌁</i><span>Mis intereses</span></button>
+          <button class="checkpoint" data-checkpoint="ideas"><i aria-hidden="true">✧</i><span>Inspiración</span></button>
+          <button class="checkpoint" data-checkpoint="finish"><i aria-hidden="true">✦</i><span>Contacto</span></button>
         </nav>
+        <div class="accessibility-tools" role="group" aria-label="Opciones de visualización">
+          <span class="accessibility-label">AJUSTA LA EXPERIENCIA</span>
+          <button id="textDecreaseButton" type="button" aria-label="Reducir tamaño de la interfaz" title="Reducir tamaño">A−</button>
+          <button id="textIncreaseButton" type="button" aria-label="Aumentar tamaño de la interfaz" title="Aumentar tamaño">A+</button>
+          <button id="contrastButton" type="button" aria-pressed="false">Más contraste</button>
+          <button id="motionButton" type="button" aria-pressed="false">Reducir animaciones</button>
+          <span id="accessibilityStatus" class="sr-only" role="status" aria-live="polite"></span>
+        </div>
         <div class="map-frame">
           <div class="map-topline"><span><i class="online-dot"></i> SENDERO ACTIVO</span><span id="mapAltitude">ALT. 00 M</span></div>
-          <div class="map-window" id="mapViewport"><div class="board" id="board" role="grid" aria-label="Camino vertical de una abeja"></div><div class="map-vignette"></div></div>
+          <div class="map-window" id="mapViewport" role="img" aria-label="Mapa visual del sendero y de la abeja" aria-describedby="mapStatus"><div class="board" id="board" aria-hidden="true"></div><div class="map-vignette" aria-hidden="true"></div></div>
           <div class="map-bottomline"><div class="heading-readout"><span class="compass-rose" id="compassArrow">↑</span><span>RUMBO <b id="headingLabel">NORTE</b></span></div><span class="steps-readout"><span id="stepsText">0</span> CASILLAS</span></div>
-          <div class="path-progress" aria-label="Paradas visitadas"><div class="progress-caption"><span>PARADAS DESCUBIERTAS</span><b id="progressText">0 / 6</b></div><div class="progress-rail" id="progressRail"></div></div>
+          <div class="path-progress" role="group" aria-label="Progreso de paradas"><div class="progress-caption"><span>PARADAS DESCUBIERTAS</span><b id="progressText" aria-live="polite">0 / 6</b></div><div class="progress-rail" id="progressRail" aria-hidden="true"></div></div>
         </div>
+        <p class="sr-only" id="mapStatus" role="status" aria-live="polite" aria-atomic="true"></p>
       </section>
 
       <section class="workbench" aria-label="Programar el vuelo">
-        <header class="workbench-heading"><div><span class="eyebrow">TALLER DE VUELO</span><h2>Programa a la abeja</h2><p>Ordena los bloques y observa cómo encuentra el camino.</p></div><div class="drag-tip"><span class="drag-diamond">✦</span> ARRASTRA<br />O TOCA</div></header>
+        <header class="workbench-heading"><div><span class="eyebrow">TALLER DE VUELO</span><h2>Programa a la abeja</h2><p>Un reto de secuenciación y orientación espacial: prueba una ruta, recibe pistas y ajústala.</p></div><div class="drag-tip"><span class="drag-diamond" aria-hidden="true">✦</span> ARRASTRA<br />O TOCA</div></header>
         <div class="coding-layout">
           <aside class="block-palette"><div class="palette-heading"><h3>Bloques</h3><span>01—05</span></div>
             <div class="palette-list" id="blockPalette">
-              <button class="palette-block move-block" draggable="true" data-op="move"><span class="block-glyph">↑</span><span class="block-name">Avanzar <i>1</i> casilla</span><span class="block-grip">⠿</span></button>
-              <button class="palette-block jump-block" draggable="true" data-op="jump"><span class="block-glyph">⌁</span><span class="block-name">Saltar <i>2</i> casillas</span><span class="block-grip">⠿</span></button>
-              <button class="palette-block turn-block" draggable="true" data-op="right"><span class="block-glyph">↻</span><span class="block-name">Girar 90° <small>DERECHA</small></span><span class="block-grip">⠿</span></button>
-              <button class="palette-block turn-block" draggable="true" data-op="left"><span class="block-glyph">↺</span><span class="block-name">Girar 90° <small>IZQUIERDA</small></span><span class="block-grip">⠿</span></button>
-              <button class="palette-block interact-block" draggable="true" data-op="interact"><span class="block-glyph">✧</span><span class="block-name">Abrir cofre</span><span class="block-grip">⠿</span></button>
+              <button class="palette-block move-block" draggable="true" data-op="move"><span class="block-glyph" aria-hidden="true">↑</span><span class="block-name">Avanzar <i>1</i> casilla</span><span class="block-grip" aria-hidden="true">⠿</span></button>
+              <button class="palette-block jump-block" draggable="true" data-op="jump"><span class="block-glyph" aria-hidden="true">⌁</span><span class="block-name">Saltar <i>2</i> casillas</span><span class="block-grip" aria-hidden="true">⠿</span></button>
+              <button class="palette-block turn-block" draggable="true" data-op="right"><span class="block-glyph" aria-hidden="true">↻</span><span class="block-name">Girar 90° <small>DERECHA</small></span><span class="block-grip" aria-hidden="true">⠿</span></button>
+              <button class="palette-block turn-block" draggable="true" data-op="left"><span class="block-glyph" aria-hidden="true">↺</span><span class="block-name">Girar 90° <small>IZQUIERDA</small></span><span class="block-grip" aria-hidden="true">⠿</span></button>
+              <button class="palette-block interact-block" draggable="true" data-op="interact"><span class="block-glyph" aria-hidden="true">✧</span><span class="block-name">Abrir cofre</span><span class="block-grip" aria-hidden="true">⠿</span></button>
             </div>
             <div class="palette-foot"><span class="palette-tip-dot"></span> Los bloques siguen el orden de arriba a abajo.</div>
+            <button class="hint-button" id="hintButton" type="button">Pedir una pista</button>
           </aside>
 
           <section class="code-panel" aria-label="Secuencia de bloques">
             <div class="code-toolbar"><span><i class="code-led"></i> MI PROGRAMA</span><span class="code-count"><b id="blockCount">0</b> BLOQUES</span></div>
-            <div class="workspace" id="workspace" tabindex="0" aria-label="Suelta los bloques aquí para programar a la abeja">
+            <div class="workspace" id="workspace" tabindex="0" aria-keyshortcuts="Enter" aria-label="Programa los bloques aquí. Presiona Enter para ejecutar la ruta.">
               <div class="start-block"><span class="flag-icon">⚑</span><span>al comenzar la aventura</span><i class="start-notch"></i></div>
               <div class="program-blocks" id="programBlocks"></div>
               <div class="drop-prompt" id="dropPrompt"><span class="drop-orbit">＋</span><b>Construye tu ruta</b><small>Arrastra un bloque desde la paleta<br />o tócalo para añadirlo.</small></div>
@@ -73,7 +84,33 @@
     <footer class="page-footer"><span>UNA AVENTURA CORTA PARA CONOCER A <b>ALEJANDRO</b></span><span>HECHO CON CURIOSIDAD <i>✳</i></span></footer>
   </main>
 
-  <section class="discovery-card" id="discoveryCard" aria-live="polite"><div class="discovery-content"><div class="discovery-art" id="discoveryArt">✦</div><div class="discovery-copy"><span class="discovery-kicker" id="discoveryKicker">COFRE DESCUBIERTO</span><h2 id="discoveryTitle">¡Hola!</h2><p id="discoveryText"></p><div id="discoveryLinks" class="discovery-links"></div></div><button id="closeDiscovery" aria-label="Cerrar">×</button></div></section>
+  <section class="welcome-tour" id="welcomeTour" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-describedby="tourDescription" hidden>
+    <div class="tour-dialog">
+      <header class="tour-header">
+        <div><span class="tour-eyebrow">GUÍA INTERACTIVA</span><span class="tour-counter" id="tourCounter">PASO 1 DE 4</span></div>
+        <div class="tour-progress-track" role="progressbar" aria-label="Progreso de la guía" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><span id="tourProgress"></span></div>
+      </header>
+      <div class="tour-card" id="tourCard">
+        <button class="tour-art-button" id="tourArtButton" type="button" aria-label="Avanzar al siguiente consejo">
+          <span class="tour-art" id="tourArt" aria-hidden="true"></span>
+          <span class="tour-art-prompt">TOCA LA ILUSTRACIÓN PARA SEGUIR <span aria-hidden="true">↗</span></span>
+        </button>
+        <div class="tour-copy">
+          <span class="tour-topic" id="tourTopic">BIENVENIDO</span>
+          <h2 id="tourTitle">El Sendero del polen</h2>
+          <p id="tourDescription">Un portafolio que también se juega.</p>
+          <ul class="tour-highlights" id="tourHighlights"></ul>
+        </div>
+      </div>
+      <nav class="tour-step-nav" id="tourStepNav" aria-label="Ir a un paso de la guía"></nav>
+      <footer class="tour-controls">
+        <button class="tour-skip" id="tourSkip" type="button">Saltar guía y explorar el portafolio <span aria-hidden="true">↗</span></button>
+        <div class="tour-control-pair"><button class="tour-back" id="tourPrevious" type="button">Anterior</button><button class="tour-next" id="tourNext" type="button">Siguiente <span aria-hidden="true">→</span></button></div>
+      </footer>
+    </div>
+  </section>
+
+  <section class="discovery-card" id="discoveryCard" aria-labelledby="discoveryTitle" aria-describedby="discoveryBadge discoveryText discoveryHighlights"><div class="discovery-content"><div class="discovery-art" id="discoveryArt" aria-hidden="true">✦</div><div class="discovery-copy"><span class="discovery-kicker" id="discoveryKicker">COFRE DESCUBIERTO</span><div class="discovery-badge" id="discoveryBadge" hidden></div><h2 id="discoveryTitle">¡Hola!</h2><p id="discoveryText"></p><ul id="discoveryHighlights" class="discovery-highlights" hidden></ul><div id="discoveryLinks" class="discovery-links"></div><div class="discovery-actions"><button id="continueDiscovery" type="button">Continuar <span aria-hidden="true">→</span></button></div></div><button id="closeDiscovery" aria-label="Cerrar ventana">×</button></div></section>
   <script src="config.js"></script><script src="app.js"></script>
 </body>
 </html>
