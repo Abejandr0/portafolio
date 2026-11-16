@@ -1,5 +1,37 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const supportedLanguages = ['es','en','pt','fr','it'];
+let currentLanguage = 'es';
+try {
+  const storedLanguage = localStorage.getItem('sendero-language');
+  if(supportedLanguages.includes(storedLanguage))currentLanguage=storedLanguage;
+} catch {/* El idioma predeterminado sigue disponible si el navegador bloquea el almacenamiento local. */}
+const locale = () => window.PORTFOLIO_LOCALES[currentLanguage] || window.PORTFOLIO_LOCALES.es;
+function tr(key, values={}){
+  const template=locale().ui[key]??locale().messages[key]??key;
+  return template.replace(/\{(\w+)\}/g,(_,name)=>String(values[name]??''));
+}
+function applyStaticTranslations(){
+  const strings=locale();
+  document.documentElement.lang=currentLanguage;
+  document.title=strings.metaTitle;
+  $('#metaDescription').content=strings.metaDescription;
+  $$('[data-i18n]').forEach(element=>{element.textContent=tr(element.dataset.i18n)});
+  $$('[data-i18n-html]').forEach(element=>{element.innerHTML=tr(element.dataset.i18nHtml)});
+  $$('[data-i18n-aria]').forEach(element=>{element.setAttribute('aria-label',tr(element.dataset.i18nAria))});
+  $$('[data-i18n-title]').forEach(element=>{element.setAttribute('title',tr(element.dataset.i18nTitle))});
+  $('#languageSelect').value=currentLanguage;
+}
+function setLanguage(language){
+  if(!supportedLanguages.includes(language))return;
+  currentLanguage=language;
+  try{localStorage.setItem('sendero-language',language)}catch{/* La preferencia se mantiene durante esta visita. */}
+  applyStaticTranslations();
+  applyVisualSettings(false);
+  renderCommands();renderBoard();updateProgress();updateMapStatus();renderAdvice();
+  if(!$('#welcomeTour').hidden)renderWelcomeTourStep(welcomeTourIndex);
+  if($('#discoveryCard').classList.contains('show'))renderDiscoveryContent();
+}
 const board = $('#board');
 const viewport = $('#mapViewport');
 const program = $('#programBlocks');
@@ -10,39 +42,29 @@ const rows = 16;
 const path = [[2,15],[2,14],[2,13],[3,13],[4,13],[4,12],[4,11],[3,11],[2,11],[2,10],[2,9],[1,9],[0,9],[0,8],[0,7],[1,7],[2,7],[2,6],[2,5],[3,5],[4,5],[4,4],[4,3],[3,3],[2,3],[2,2],[2,1],[2,0]];
 const pathSet = new Set(path.map(([x,y]) => `${x},${y}`));
 const directions = [
-  {x:0,y:-1,face:'north',label:'NORTE',arrow:'↑'},
-  {x:1,y:0,face:'east',label:'ESTE',arrow:'→'},
-  {x:0,y:1,face:'south',label:'SUR',arrow:'↓'},
-  {x:-1,y:0,face:'west',label:'OESTE',arrow:'←'}
+  {x:0,y:-1,face:'north',key:'north',arrow:'↑'},
+  {x:1,y:0,face:'east',key:'east',arrow:'→'},
+  {x:0,y:1,face:'south',key:'south',arrow:'↓'},
+  {x:-1,y:0,face:'west',key:'west',arrow:'←'}
 ];
 const commandsInfo = {
-  move:{label:'Avanzar 1 casilla',symbol:'↑',color:'move-block'},
-  jump:{label:'Saltar 2 casillas',symbol:'⌁',color:'jump-block'},
-  right:{label:'Girar 90° a la derecha',symbol:'↻',color:'turn-block'},
-  left:{label:'Girar 90° a la izquierda',symbol:'↺',color:'turn-block'},
-  interact:{label:'Abrir cofre',symbol:'✦',color:'interact-block'}
+  move:{symbol:'↑',color:'move-block'},
+  jump:{symbol:'⌁',color:'jump-block'},
+  right:{symbol:'↻',color:'turn-block'},
+  left:{symbol:'↺',color:'turn-block'},
+  interact:{symbol:'✦',color:'interact-block'}
 };
 const chests = [
-  {x:2,y:13,pathIndex:2,title:'Hola, soy Alejandro',kicker:'COFRE 1 · SOBRE MÍ',badge:'Curiosidad · conocer al creador',text:'Soy estudiante de Ingeniería de Software en la Universidad Cooperativa de Colombia. Me gusta aprender construyendo: tomar una idea, convertirla en una solución y mejorarla paso a paso. Fuera del código, me encantan las motos y soy amante de las abejas.',highlights:['Estudio Ingeniería de Software en la Universidad Cooperativa de Colombia.','Motos y abejas son dos de mis grandes intereses.'],art:'bee'},
-  {x:4,y:11,pathIndex:6,title:'Habilidades que cultivo',kicker:'COFRE 2 · APRENDIZAJE',badge:'Ciberseguridad · curiosidad en acción',text:'Me gusta mucho aprender sobre ciberseguridad. Como estudiante de Ingeniería de Software, me interesa entender cómo proteger los sistemas, reconocer riesgos y construir tecnología con más responsabilidad. Estoy formando esa base paso a paso y explorando este campo con curiosidad.',highlights:['Interés actual: ciberseguridad y protección de sistemas.','Mi formación en software me ayuda a conectar seguridad con la construcción de aplicaciones.'],art:'spark'},
-  {x:2,y:9,pathIndex:10,title:'Proyectos en construcción',kicker:'COFRE 3 · PROYECTOS',badge:'Creación · ideas que toman forma',text:'Estos proyectos nacen de intereses distintos: tecnología para motociclistas, experiencias de aprendizaje, vínculos personales y herramientas con inteligencia artificial. Cada tarjeta cuenta qué puedes encontrar al abrir su repositorio o sitio.',art:'chest'},
-  {x:0,y:7,pathIndex:14,title:'Fuera del código',kicker:'COFRE 4 · MIS INTERESES',badge:'Motos · abejas · curiosidad',text:'Las motos me entusiasman por todo lo que rodea cada recorrido: las máquinas, sus modificaciones y las historias que aparecen en el camino. También soy amante de las abejas; me fascinan su mundo y la forma en que cada aporte cuenta. Son intereses que mantienen viva mi curiosidad y me dan nuevas ideas para construir.',highlights:['Motos: pasión que también se convirtió en ideas para proyectos.','Abejas: un interés personal que acompaña el nombre y el espíritu de este juego.'],art:'spark'},
-  {x:2,y:7,pathIndex:16,title:'Lo que me inspira',kicker:'COFRE 5 · HISTORIAS E IDEAS',badge:'Imaginación · crear con significado',text:'Me inspira crear experiencias que conectan con una historia y con lo que le importa a quien juega. Jakelin’s World es un videojuego 2D narrativo que hice para una persona muy especial en mi vida: reúne minijuegos relacionados con cosas que a ella le gustan y todavía está en desarrollo. También me ilusiona crear juegos para niños con retos amables, ideas claras y espacio para aprender jugando.',highlights:['Jakelin’s World: videojuego 2D narrativo con minijuegos, aún en desarrollo.','Me interesan los juegos para niños y la gamificación como formas de despertar curiosidad.'],art:'spark'},
-  {x:2,y:0,pathIndex:27,title:'Último cofre · Contacto',kicker:'COFRE FINAL · META Y CONTACTO',badge:'Logro · Explorador del Sendero',text:'¡Encontraste la última parada! Gracias por recorrer el sendero y conocer un poco de mí. Me encanta aprender, compartir ideas y seguir creando. Si te interesa alguno de mis proyectos o quieres conversar, aquí puedes encontrarme.',highlights:['Instagram · @alejojcastro','GitHub · Abejandr0'],art:'trophy'}
+  {x:2,y:13,pathIndex:2,art:'bee'},
+  {x:4,y:11,pathIndex:6,art:'spark'},
+  {x:2,y:9,pathIndex:10,art:'chest'},
+  {x:0,y:7,pathIndex:14,art:'spark'},
+  {x:2,y:7,pathIndex:16,art:'spark'},
+  {x:2,y:0,pathIndex:27,art:'trophy'}
 ];
 const finalChestIndex=chests.length-1;
-const projectLinks = [
-  {label:'MotoTracer',description:'App móvil para registrar rodadas, administrar motocicletas y compartir rutas.',href:'https://github.com/Abejandr0/mototracer'},
-  {label:'MotoMod',description:'Simulador de modificaciones para motocicletas y de su impacto mecánico.',href:'https://github.com/Abejandr0/mods-app'},
-  {label:'Honey',description:'Aplicación para relojes inteligentes enfocada en la comunicación entre parejas.',href:'https://github.com/Abejandr0/honey'},
-  {label:'CodeType',description:'Aprende programación mediante mecanografía en una aplicación de escritorio.',href:'https://github.com/Abejandr0/codeType'},
-  {label:'AIverse',description:'Una experiencia de inteligencia artificial disponible para explorar en la web.',href:'https://aiverse-alejandro.duckdns.org/'},
-  {label:'Jakelin’s World',description:'Videojuego 2D narrativo con minijuegos inspirados en sus gustos. En desarrollo.',status:'En desarrollo'}
-];
-const contactLinks = [
-  {label:'Instagram · @alejojcastro',description:'Mi perfil de Instagram.',href:'https://www.instagram.com/alejojcastro/'},
-  {label:'GitHub · Abejandr0',description:'Mis repositorios y proyectos de código.',href:'https://github.com/Abejandr0'}
-];
+const projectUrls = ['https://github.com/Abejandr0/mototracer','https://github.com/Abejandr0/mods-app','https://github.com/Abejandr0/honey','https://github.com/Abejandr0/codeType','https://aiverse-alejandro.duckdns.org/',null];
+const contactUrls = ['https://www.instagram.com/alejojcastro/','https://github.com/Abejandr0'];
 const spawn = {x:2,y:15,dir:0};
 const checkpoints = {
   start:{x:2,y:13,dir:1,chestIndex:0},
@@ -65,6 +87,8 @@ let steps = 0;
 let isRunning = false;
 let draggedIndex = null;
 let discoveryResolver = null;
+let activeDiscovery = null;
+let lastAdvice = {titleKey:'assistantTitle',messageKey:'owlInitial',values:{}};
 let lastPlayerCell = null;
 let previousFocus = null;
 let hasSeenWelcomeTour = false;
@@ -94,15 +118,17 @@ function applyVisualSettings(announce=false){
   $('#motionButton').setAttribute('aria-pressed',String(visualSettings.reduceMotion));
   $('#textDecreaseButton').disabled=visualSettings.textScale===0;
   $('#textIncreaseButton').disabled=visualSettings.textScale===2;
-  if(announce){
-    const scaleLabel=['tamaño normal','interfaz ampliada al 108%','interfaz ampliada al 116%'][visualSettings.textScale];
-    $('#accessibilityStatus').textContent=`Preferencias aplicadas: ${scaleLabel}, contraste ${visualSettings.highContrast?'alto':'normal'}, animaciones ${visualSettings.reduceMotion?'reducidas':'activas'}.`;
+  if(announce||$('#accessibilityStatus').textContent){
+    const scaleLabel=tr(['scaleNormal','scale108','scale116'][visualSettings.textScale]);
+    const contrast=tr(visualSettings.highContrast?'contrastHigh':'contrastNormal');
+    const motion=tr(visualSettings.reduceMotion?'motionReduced':'motionActive');
+    $('#accessibilityStatus').textContent=tr('accessibilityApplied',{scale:scaleLabel,contrast,motion});
   }
   saveVisualSettings();
 }
 function updateMapStatus(){
   const direction=directions[player.dir];
-  $('#mapStatus').textContent=`La abeja está en la columna ${player.x+1}, a ${(rows-1-player.y)*12} metros de altura, mirando al ${direction.label.toLowerCase()}. Has descubierto ${opened.size} de ${chests.length} paradas.`;
+  $('#mapStatus').textContent=tr('mapStatus',{column:player.x+1,height:(rows-1-player.y)*12,direction:locale().directionPhrases[direction.key],opened:opened.size,total:chests.length});
 }
 function showDiscovery(){
   const card=$('#discoveryCard');
@@ -113,29 +139,24 @@ function showDiscovery(){
   card.classList.add('show');
   $('#closeDiscovery').focus();
 }
-const welcomeTourSteps=[
-  {topic:'BIENVENIDO',title:'El Sendero del polen',description:'Un portafolio que también se juega: explora mi trabajo mientras programas el vuelo de una abeja.',art:'bee',highlights:['Sigue el sendero a tu ritmo.','Cada cofre revela una parte del portafolio.']},
-  {topic:'ACCESOS DIRECTOS',title:'Elige dónde empezar',description:'Los botones del mapa te llevan directo a Sobre mí, Habilidades, Proyectos, Mis intereses, Inspiración o Contacto. Cada uno abre esa sección sin jugar primero.',art:'flag',highlights:['Elige una sección cuando quieras saltar a una parte concreta.','Si prefieres la aventura completa, puedes jugar el reto del mapa.']},
-  {topic:'PROGRAMA Y PRUEBA',title:'Toca bloques para crear una ruta',description:'Añade instrucciones con un toque, ordénalas con las flechas y pulsa “Ejecutar ruta”. También puedes arrastrar los bloques.',art:'spark',highlights:['La abeja sigue la secuencia de arriba hacia abajo.','El búho puede darte una pista cuando la necesites.']},
-  {topic:'A TU MANERA',title:'Ajusta la experiencia',description:'Explora sin afán y cambia la forma en que ves el juego desde las opciones sobre el mapa.',art:'chest',highlights:['A− y A+ amplían la interfaz.','Activa más contraste o reduce las animaciones.']}
-];
 function renderWelcomeTourStep(index){
+  const welcomeTourSteps=locale().tour;
   welcomeTourIndex=Math.max(0,Math.min(welcomeTourSteps.length-1,index));
   const step=welcomeTourSteps[welcomeTourIndex];
   const card=$('#tourCard');card.classList.remove('is-changing');void card.offsetWidth;card.classList.add('is-changing');
-  $('#tourCounter').textContent=`PASO ${welcomeTourIndex+1} DE ${welcomeTourSteps.length}`;
+  $('#tourCounter').textContent=tr('tourCounter',{current:welcomeTourIndex+1,total:welcomeTourSteps.length});
   $('#tourTopic').textContent=step.topic;$('#tourTitle').textContent=step.title;$('#tourDescription').textContent=step.description;
   $('#tourArt').innerHTML=artMarkup(step.art);
   const isLastTourStep=welcomeTourIndex===welcomeTourSteps.length-1;
-  $('#tourArtButton').setAttribute('aria-label',isLastTourStep?'Empezar la aventura':`Siguiente consejo: ${welcomeTourSteps[welcomeTourIndex+1].title}`);
-  $('#tourArtPromptText').textContent=isLastTourStep?'TOCA PARA EMPEZAR':'TOCA LA ILUSTRACIÓN PARA SEGUIR';
+  $('#tourArtButton').setAttribute('aria-label',isLastTourStep?tr('tourArtStartAria'):tr('tourArtNextAria',{title:welcomeTourSteps[welcomeTourIndex+1].title}));
+  $('#tourArtPromptText').textContent=tr(isLastTourStep?'tourPromptStart':'tourPromptNext');
   $('#tourHighlights').replaceChildren(...step.highlights.map(text=>{const item=document.createElement('li');item.textContent=text;return item}));
   $('#tourProgress').style.width=`${((welcomeTourIndex+1)/welcomeTourSteps.length)*100}%`;
   $('.tour-progress-track').setAttribute('aria-valuenow',String(welcomeTourIndex+1));
   $('#tourPrevious').disabled=welcomeTourIndex===0;
-  $('#tourNext').innerHTML=welcomeTourIndex===welcomeTourSteps.length-1?'Empezar a jugar <span aria-hidden="true">→</span>':'Siguiente <span aria-hidden="true">→</span>';
+  $('#tourNext').innerHTML=welcomeTourIndex===welcomeTourSteps.length-1?`${tr('tourStart')} <span aria-hidden="true">→</span>`:`${tr('tourNext')} <span aria-hidden="true">→</span>`;
   const keepStepFocus=document.activeElement?.classList.contains('tour-step-dot');
-  $('#tourStepNav').replaceChildren(...welcomeTourSteps.map((item,stepIndex)=>{const button=document.createElement('button');button.type='button';button.className=`tour-step-dot${stepIndex===welcomeTourIndex?' is-active':''}`;button.setAttribute('aria-label',`Ir al paso ${stepIndex+1}: ${item.title}`);if(stepIndex===welcomeTourIndex)button.setAttribute('aria-current','step');button.textContent=String(stepIndex+1);button.addEventListener('click',()=>renderWelcomeTourStep(stepIndex));return button}));
+  $('#tourStepNav').replaceChildren(...welcomeTourSteps.map((item,stepIndex)=>{const button=document.createElement('button');button.type='button';button.className=`tour-step-dot${stepIndex===welcomeTourIndex?' is-active':''}`;button.setAttribute('aria-label',tr('tourStepAria',{number:stepIndex+1,title:item.title}));if(stepIndex===welcomeTourIndex)button.setAttribute('aria-current','step');button.textContent=String(stepIndex+1);button.addEventListener('click',()=>renderWelcomeTourStep(stepIndex));return button}));
   if(keepStepFocus)$(`#tourStepNav .tour-step-dot:nth-child(${welcomeTourIndex+1})`).focus();
 }
 function openWelcomeTour(){
@@ -150,8 +171,8 @@ function closeWelcomeTour(focusTarget){
   try{localStorage.setItem('sendero-welcome-seen','true')}catch{/* La guía seguirá siendo accesible desde el botón superior. */}
   const target=focusTarget||welcomeTourReturnFocus||$('#replayWelcomeTour');welcomeTourReturnFocus=null;target?.focus();
 }
-function advanceWelcomeTour(){if(welcomeTourIndex===welcomeTourSteps.length-1)closeWelcomeTour($('#blockPalette .palette-block'));else renderWelcomeTourStep(welcomeTourIndex+1)}
-function beeMarkup(){return `<svg class="bee-svg" viewBox="0 0 72 72" role="img" aria-label="Abeja exploradora">
+function advanceWelcomeTour(){if(welcomeTourIndex===locale().tour.length-1)closeWelcomeTour($('#blockPalette .palette-block'));else renderWelcomeTourStep(welcomeTourIndex+1)}
+function beeMarkup(){return `<svg class="bee-svg" viewBox="0 0 72 72" role="img" aria-label="${tr('beeExplorer')}">
   <path class="bee-wing wing-a" d="M25 31C19 18 9 17 8 25c-1 7 5 13 16 16l5-3Zm22 0c6-13 16-14 17-6 1 7-5 13-16 16l-5-3Z" fill="#d8f4f2" stroke="#87c9d0" stroke-width="1.5" stroke-linejoin="round"/>
   <path d="M22 34c-1-7 5-11 14-11s15 4 14 11c2 8 2 17-1 25-2 6-7 10-13 12-6-2-11-6-13-12-3-8-3-17-1-25Z" fill="#f8c742"/>
   <path d="M23 46c8 3.5 18 3.5 26 0l-.6 6.2c-7.7 3.2-17.1 3.2-24.8 0Zm2 11c6.7 2.7 15.3 2.7 22 0-1.9 5.4-5.4 9.1-11 11-5.6-1.9-9.1-5.6-11-11Z" fill="#514652"/>
@@ -187,7 +208,7 @@ function buildBoard(){
     const index=path.findIndex(([px,py])=>px===x&&py===y);
     if(index>=0){tile.style.setProperty('--path-order',index);if(index%2===0)tile.classList.add('path-sunlit')}
     const chestIndex=chests.findIndex(chest=>chest.x===x&&chest.y===y);
-    if(chestIndex>=0){const isFinal=chestIndex===finalChestIndex;tile.classList.add('chest-cell');if(isFinal)tile.classList.add('final-chest-cell');const art=document.createElement('span');art.className='tile-art chest-art';art.innerHTML=artMarkup(isFinal?'finalChest':'chest');tile.append(art);const badge=document.createElement('span');badge.className=`treasure-count${isFinal?' final-treasure-count':''}`;badge.textContent=String(chestIndex+1);badge.setAttribute('aria-label',isFinal?'Cofre final':'Cofre');tile.append(badge)}
+    if(chestIndex>=0){const isFinal=chestIndex===finalChestIndex;tile.classList.add('chest-cell');if(isFinal)tile.classList.add('final-chest-cell');const art=document.createElement('span');art.className='tile-art chest-art';art.innerHTML=artMarkup(isFinal?'finalChest':'chest');tile.append(art);const badge=document.createElement('span');badge.className=`treasure-count${isFinal?' final-treasure-count':''}`;badge.textContent=String(chestIndex+1);badge.setAttribute('aria-label',tr(isFinal?'chestFinalAria':'chestAria'));tile.append(badge)}
     else if(index<0){const type=scenicType(x,y);const art=document.createElement('span');art.className=`tile-art obstacle-art ${type}-art`;art.innerHTML=scenery[`${x},${y}`]||scenery[type];tile.append(art)}
     else if(index===path.length-1){const goal=document.createElement('span');goal.className='tile-art goal-art';goal.innerHTML=artMarkup('flag');tile.append(goal)}
     board.append(tile);
@@ -201,7 +222,7 @@ function updateCamera(){
   const offset=Math.max(0,Math.min(maxOffset,desired));
   board.style.transform=`translate3d(0,${-offset}px,0)`;
 }
-function updateDirection(){const direction=directions[player.dir];$('#compassArrow').textContent=direction.arrow;$('#compassArrow').style.setProperty('--compass-turn',`${player.dir*90}deg`);$('#headingLabel').textContent=direction.label}
+function updateDirection(){const direction=directions[player.dir];$('#compassArrow').textContent=direction.arrow;$('#compassArrow').style.setProperty('--compass-turn',`${player.dir*90}deg`);$('#headingLabel').textContent=locale().directions[direction.key].toLocaleUpperCase(currentLanguage)}
 function settleChest(index){
   const chest=chests[index];if(!chest||!opened.has(index))return;const tile=$(`.cell[data-x="${chest.x}"][data-y="${chest.y}"]`,board);if(!tile)return;
   if(index===finalChestIndex){
@@ -214,24 +235,24 @@ function settleChest(index){
 function renderBoard(animateChest=-1){
   $$('.cell',board).forEach(tile=>{tile.classList.remove('player-cell');$('.bee',tile)?.remove()});
   const current=$(`.cell[data-x="${player.x}"][data-y="${player.y}"]`,board);
-  if(current){current.classList.add('player-cell');const wrapper=document.createElement('span');wrapper.className='bee';wrapper.style.setProperty('--heading-turn',`${player.dir*90}deg`);wrapper.innerHTML=`${beeMarkup()}<span class="bee-heading" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5.5 11h4.2v10h4.6V11h4.2L12 3Z"/></svg></span>`;wrapper.setAttribute('aria-label',`Abeja mirando al ${directions[player.dir].label.toLowerCase()}`);current.append(wrapper);if(lastPlayerCell!==key(player.x,player.y)){wrapper.classList.add('bee-arrive');lastPlayerCell=key(player.x,player.y)}}
+  if(current){current.classList.add('player-cell');const wrapper=document.createElement('span');wrapper.className='bee';wrapper.style.setProperty('--heading-turn',`${player.dir*90}deg`);wrapper.innerHTML=`${beeMarkup()}<span class="bee-heading" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5.5 11h4.2v10h4.6V11h4.2L12 3Z"/></svg></span>`;wrapper.setAttribute('aria-label',tr('beeFacing',{direction:locale().directionPhrases[directions[player.dir].key]}));current.append(wrapper);if(lastPlayerCell!==key(player.x,player.y)){wrapper.classList.add('bee-arrive');lastPlayerCell=key(player.x,player.y)}}
   chests.forEach((chest,index)=>{const tile=$(`.cell[data-x="${chest.x}"][data-y="${chest.y}"]`,board);if(!tile)return;if(opened.has(index)){if(index===animateChest&&$('.chest-art',tile)){tile.classList.add('opened-chest','chest-unsealing');$('.chest-art',tile).innerHTML=artMarkup('spark');window.setTimeout(()=>settleChest(index),900)}else settleChest(index)}else{tile.classList.remove('revealed-path','goal-reached','opened-chest','chest-unsealing');tile.classList.add('chest-cell','chest-glow');if(index===finalChestIndex)tile.classList.add('final-chest-cell');let art=$('.chest-art',tile);if(!art){art=document.createElement('span');art.className='tile-art chest-art';const badge=document.createElement('span');badge.className=`treasure-count${index===finalChestIndex?' final-treasure-count':''}`;badge.textContent=String(index+1);tile.append(art,badge)}art.innerHTML=artMarkup(index===finalChestIndex?'finalChest':'chest')}});
   board.classList.toggle('mission-complete',opened.size===chests.length);
-  $('#mapAltitude').textContent=`ALT. ${String((rows-1-player.y)*12).padStart(2,'0')} M`;
+  $('#mapAltitude').textContent=tr('altitude',{height:String((rows-1-player.y)*12).padStart(2,'0')});
   updateDirection();updateCamera();
 }
 function renderCommands(){
   program.replaceChildren();
   commands.forEach((op,index)=>{
-    const info=commandsInfo[op];const item=document.createElement('div');item.className=`program-block ${info.color}`;item.draggable=true;item.dataset.index=index;
+    const info=commandsInfo[op];const labelText=locale().commands[op];const item=document.createElement('div');item.className=`program-block ${info.color}`;item.draggable=true;item.dataset.index=index;
     const num=document.createElement('span');num.className='block-index';num.textContent=String(index+1).padStart(2,'0');
     const glyph=document.createElement('span');glyph.className='sequence-glyph';glyph.textContent=info.symbol;
-    const label=document.createElement('span');label.className='sequence-label';label.textContent=info.label;
-    const actions=document.createElement('span');actions.className='sequence-actions';actions.setAttribute('role','group');actions.setAttribute('aria-label',`Acciones para ${info.label}`);
-    const up=document.createElement('button');up.className='move-command-button move-command-up';up.type='button';up.setAttribute('aria-label',`Mover ${info.label} hacia arriba`);up.textContent='↑';up.disabled=index===0;up.addEventListener('click',()=>moveCommandBy(index,-1));
-    const down=document.createElement('button');down.className='move-command-button move-command-down';down.type='button';down.setAttribute('aria-label',`Mover ${info.label} hacia abajo`);down.textContent='↓';down.disabled=index===commands.length-1;down.addEventListener('click',()=>moveCommandBy(index,1));
+    const label=document.createElement('span');label.className='sequence-label';label.textContent=labelText;
+    const actions=document.createElement('span');actions.className='sequence-actions';actions.setAttribute('role','group');actions.setAttribute('aria-label',tr('commandActionsAria',{label:labelText}));
+    const up=document.createElement('button');up.className='move-command-button move-command-up';up.type='button';up.setAttribute('aria-label',tr('commandUpAria',{label:labelText}));up.textContent='↑';up.disabled=index===0;up.addEventListener('click',()=>moveCommandBy(index,-1));
+    const down=document.createElement('button');down.className='move-command-button move-command-down';down.type='button';down.setAttribute('aria-label',tr('commandDownAria',{label:labelText}));down.textContent='↓';down.disabled=index===commands.length-1;down.addEventListener('click',()=>moveCommandBy(index,1));
     actions.append(up,down);
-    const remove=document.createElement('button');remove.className='remove-block';remove.type='button';remove.setAttribute('aria-label',`Quitar ${info.label}`);remove.textContent='×';remove.addEventListener('click',()=>removeCommand(index));
+    const remove=document.createElement('button');remove.className='remove-block';remove.type='button';remove.setAttribute('aria-label',tr('commandRemoveAria',{label:labelText}));remove.textContent='×';remove.addEventListener('click',()=>removeCommand(index));
     item.append(num,glyph,label,actions,remove);
     item.addEventListener('dragstart',event=>{draggedIndex=index;event.dataTransfer.setData('text/plain',`reorder:${index}`);event.dataTransfer.effectAllowed='move';item.classList.add('dragging')});
     item.addEventListener('dragend',()=>{item.classList.remove('dragging');draggedIndex=null;trash.classList.remove('is-over')});
@@ -243,46 +264,63 @@ function renderCommands(){
 function updateProgress(){
   const count=opened.size,total=chests.length;$('#progressText').textContent=`${count} / ${total}`;
   $('#missionCount').innerHTML=`${count} <i>/ ${total}</i>`;
-  $('#missionCount').setAttribute('aria-label',`${count} de ${total} paradas descubiertas`);
+  $('#missionCount').setAttribute('aria-label',tr('missionCountAria',{count,total}));
   const honeyTrack=$('#honeyTrack');
   if(honeyTrack.children.length!==total)honeyTrack.replaceChildren(...Array.from({length:total},()=>document.createElement('span')));
-  [...honeyTrack.children].forEach((segment,index)=>{const discovered=opened.has(index);segment.classList.add('honey-segment');segment.classList.toggle('is-filled',discovered);segment.setAttribute('aria-label',`Cofre ${index+1}${discovered?' descubierto':' pendiente'}`)});
+  [...honeyTrack.children].forEach((segment,index)=>{const discovered=opened.has(index);segment.classList.add('honey-segment');segment.classList.toggle('is-filled',discovered);segment.setAttribute('aria-label',tr(discovered?'chestDiscoveredAria':'chestPendingAria',{number:index+1}))});
   const progressRail=$('#progressRail');
   if(progressRail.children.length!==total)progressRail.replaceChildren(...chests.map(()=>{const node=document.createElement('span');node.className='progress-stop';node.innerHTML='<i></i>';return node}));
-  [...progressRail.children].forEach((node,index)=>{const discovered=opened.has(index);node.classList.toggle('is-done',discovered);node.setAttribute('aria-label',`Checkpoint ${index+1}${discovered?' completado':' pendiente'}`)});
+  [...progressRail.children].forEach((node,index)=>{const discovered=opened.has(index);node.classList.toggle('is-done',discovered);node.setAttribute('aria-label',tr(discovered?'checkpointDoneAria':'checkpointPendingAria',{number:index+1}))});
   $('#stepsText').textContent=steps;
-  $$('.checkpoint').forEach(button=>{const point=checkpoints[button.dataset.checkpoint];const active=(point.x===player.x&&point.y===player.y)||(button.dataset.checkpoint==='start'&&steps===0&&opened.size===0);button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');const index=chests.findIndex(chest=>chest.x===point.x&&chest.y===point.y);const visited=index>=0&&opened.has(index);button.classList.toggle('visited',visited);button.setAttribute('aria-label',`${$('span',button).textContent}${visited?' · parada descubierta':''}`)});
+  $$('.checkpoint').forEach(button=>{const point=checkpoints[button.dataset.checkpoint];const active=(point.x===player.x&&point.y===player.y)||(button.dataset.checkpoint==='start'&&steps===0&&opened.size===0);button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');const index=chests.findIndex(chest=>chest.x===point.x&&chest.y===point.y);const visited=index>=0&&opened.has(index);button.classList.toggle('visited',visited);const label=$('span',button).textContent;button.setAttribute('aria-label',visited?tr('checkpointVisitedAria',{label}):label)});
 }
-function advice(title,message){$('#assistantTitle').textContent=title;$('#assistantMessage').textContent=message}
-function notify(message){
-  const assistant=$('#assistant');assistant.classList.add('show','attention');advice('Búho guía',message);setTimeout(()=>assistant.classList.remove('attention'),550);
+function renderAdvice(){$('#assistantTitle').textContent=tr(lastAdvice.titleKey);$('#assistantMessage').textContent=tr(lastAdvice.messageKey,lastAdvice.values)}
+function advice(titleKey,messageKey,values={}){lastAdvice={titleKey,messageKey,values};renderAdvice()}
+function notify(messageKey,values={}){
+  const assistant=$('#assistant');assistant.classList.add('show','attention');advice('owlTitle',messageKey,values);setTimeout(()=>assistant.classList.remove('attention'),550);
 }
 function renderHighlights(items=[]){const container=$('#discoveryHighlights');container.replaceChildren();items.forEach(text=>{const item=document.createElement('li');item.textContent=text;container.append(item)});container.hidden=items.length===0}
-function renderLinks(items){const container=$('#discoveryLinks');container.replaceChildren();items.forEach(item=>{const card=document.createElement(item.href?'a':'article');card.className='discovery-project';if(item.href){card.href=item.href;card.target='_blank';card.rel='noopener noreferrer'}else card.classList.add('is-in-development');const copy=document.createElement('span');copy.className='discovery-project-copy';const title=document.createElement('strong');title.textContent=item.label;const description=document.createElement('span');description.textContent=item.description||'';copy.append(title,description);const marker=document.createElement('span');marker.className='discovery-project-marker';marker.textContent=item.href?'↗':(item.status||'En desarrollo');marker.setAttribute('aria-hidden','true');card.append(copy,marker);container.append(card)})}
+function renderLinks(items){const container=$('#discoveryLinks');container.replaceChildren();items.forEach(item=>{const card=document.createElement(item.href?'a':'article');card.className='discovery-project';if(item.href){card.href=item.href;card.target='_blank';card.rel='noopener noreferrer'}else card.classList.add('is-in-development');const copy=document.createElement('span');copy.className='discovery-project-copy';const title=document.createElement('strong');title.textContent=item.label;const description=document.createElement('span');description.textContent=item.description||'';copy.append(title,description);const marker=document.createElement('span');marker.className='discovery-project-marker';marker.textContent=item.href?'↗':(item.status||tr('inDevelopment'));marker.setAttribute('aria-hidden','true');card.append(copy,marker);container.append(card)})}
+function getProjectLinks(){return locale().projects.map((item,index)=>({...item,href:projectUrls[index]}))}
+function getContactLinks(){return locale().contacts.map((item,index)=>({...item,href:contactUrls[index]}))}
+function renderDiscoveryContent(){
+  if(!activeDiscovery)return;
+  const card=$('#discoveryCard');
+  if(activeDiscovery.type==='portfolio'){
+    $('#discoveryKicker').textContent=tr('portfolioKicker');$('#discoveryTitle').textContent=tr('portfolioTitle');$('#discoveryText').textContent=tr('portfolioText');$('#discoveryArt').innerHTML=artMarkup('bee');$('#discoveryBadge').hidden=true;renderHighlights([]);renderLinks([...getProjectLinks(),...getContactLinks()]);card.setAttribute('aria-describedby','discoveryText');card.classList.remove('complete');return;
+  }
+  const index=activeDiscovery.index;const chest=chests[index];const copy=locale().chests[index];const complete=index===finalChestIndex&&opened.size===chests.length;
+  $('#discoveryKicker').textContent=complete?tr('goalKicker',{total:chests.length}):copy.kicker;$('#discoveryTitle').textContent=complete?tr('goalChestTitle'):copy.title;$('#discoveryText').textContent=complete?tr('goalChestText'):copy.text;$('#discoveryArt').innerHTML=artMarkup(complete?'trophy':chest.art);
+  const badge=$('#discoveryBadge');badge.hidden=false;badge.textContent=`✦ ${complete?tr('goalBadge'):copy.badge}`;
+  renderHighlights(complete?[tr('goalHighlightOne'),tr('goalHighlightTwo')]:copy.highlights);
+  renderLinks(index===2?getProjectLinks():index===finalChestIndex?getContactLinks():[]);card.setAttribute('aria-describedby','discoveryBadge discoveryText discoveryHighlights');card.classList.toggle('complete',complete);
+}
 function reveal(index){
-  const chest=chests[index];const complete=index===finalChestIndex&&opened.size===chests.length;$('#discoveryKicker').textContent=complete?`¡META ALCANZADA! · ${chests.length}/${chests.length} PARADAS`:chest.kicker;$('#discoveryTitle').textContent=complete?'¡Meta alcanzada!':chest.title;$('#discoveryText').textContent=complete?'Abriste las seis paradas y llegaste al final del sendero. Gracias por acompañarme; soy Alejandro y me encantaría seguir en contacto.':chest.text;$('#discoveryArt').innerHTML=artMarkup(complete?'trophy':chest.art);const badge=$('#discoveryBadge');badge.hidden=false;badge.textContent=`✦ Insignia: ${complete?'Explorador del Sendero':chest.badge}`;renderHighlights(complete?['¡Abriste las seis paradas!','Puedes volver a cualquier sección desde los accesos directos del mapa.']:chest.highlights);renderLinks(index===2?projectLinks:index===finalChestIndex?contactLinks:[]);const card=$('#discoveryCard');card.setAttribute('aria-describedby','discoveryBadge discoveryText discoveryHighlights');card.classList.toggle('complete',complete);card.classList.remove('show');void card.offsetWidth;showDiscovery();updateMapStatus();if(complete)advice('¡Meta alcanzada!','¡Abriste las seis paradas y desbloqueaste la insignia de Explorador del Sendero!');else advice('¡Cofre descubierto!','¡Buen trabajo! El cofre se abre y deja el sendero libre para continuar.');
+  activeDiscovery={type:'chest',index};const complete=index===finalChestIndex&&opened.size===chests.length;
+  const card=$('#discoveryCard');renderDiscoveryContent();card.classList.remove('show');void card.offsetWidth;showDiscovery();updateMapStatus();
+  if(complete)advice('goalTitle','goalMessage');else advice('foundTitle','foundMessage');
 }
 function nearestChest(){let best=-1,distance=Infinity;chests.forEach((chest,index)=>{if(opened.has(index))return;const d=Math.abs(player.x-chest.x)+Math.abs(player.y-chest.y);if(d<distance){best=index;distance=d}});return{index:best,distance}}
 function giveHint(){
   const target=nearestChest();
-  if(target.index<0){notify('Ya descubriste todas las paradas. ¡Buen trabajo!');return}
+  if(target.index<0){notify('hintAllDone');return}
   const chest=chests[target.index];
   const currentIndex=path.findIndex(([x,y])=>x===player.x&&y===player.y);
-  if(currentIndex===chest.pathIndex){notify(`Estás junto a la parada ${target.index+1}. Añade el bloque “Abrir cofre” para descubrirla.`);return}
-  if(currentIndex<0){notify(`La siguiente parada está a ${target.distance} casillas. Busca las baldosas iluminadas y avanza con calma.`);return}
+  if(currentIndex===chest.pathIndex){notify('hintAtStop',{number:target.index+1});return}
+  if(currentIndex<0){notify('hintFar',{distance:target.distance});return}
   const nextIndex=currentIndex+(chest.pathIndex>currentIndex?1:-1);
   const [nextX,nextY]=path[nextIndex];
   const directionIndex=directions.findIndex(direction=>direction.x===nextX-player.x&&direction.y===nextY-player.y);
-  const relative=['de frente','a tu derecha','detrás de ti','a tu izquierda'][(directionIndex-player.dir+4)%4];
+  const relative=tr(['relativeFront','relativeRight','relativeBehind','relativeLeft'][(directionIndex-player.dir+4)%4]);
   const remaining=Math.abs(chest.pathIndex-currentIndex);
-  notify(`La parada ${target.index+1} está a ${remaining} baldosas. Por ahora el sendero sigue ${relative}. Prueba avanzar y revisa el rumbo cuando el camino gire.`);
+  notify('hintRoute',{number:target.index+1,remaining,relative});
 }
 function jumpCheckpoint(checkpoint){const point=checkpoints[checkpoint];if(!point||isRunning)return;player={x:point.x,y:point.y,dir:point.dir};lastPlayerCell=null;openChest(point.chestIndex)}
-function walk(distance=1){const dir=directions[player.dir];for(let n=0;n<distance;n++){const nx=player.x+dir.x,ny=player.y+dir.y;if(!pathSet.has(key(nx,ny))){const chestIndex=chests.findIndex((chest,index)=>chest.x===player.x&&chest.y===player.y&&!opened.has(index));if(chestIndex>=0){notify(`¡Tienes el cofre ${chestIndex+1} a tus pies! Usa “Abrir cofre” para descubrirlo.`);return false}const target=nearestChest();const targetPoint=target.index>=0?chests[target.index]:null;const turnNeeded=targetPoint&&Math.abs(player.x-targetPoint.x)+Math.abs(player.y-targetPoint.y)<5;notify(`La abeja no puede avanzar hacia ${directions[player.dir].label.toLowerCase()}. ${turnNeeded?'El sendero gira aquí; usa un bloque de giro.':'Hay un obstáculo en esa baldosa. Prueba a saltarlo si el camino sigue detrás.'}`);return false}player.x=nx;player.y=ny;steps++;renderBoard();updateProgress()}return true}
-async function jump(){const dir=directions[player.dir],nx=player.x+dir.x*2,ny=player.y+dir.y*2;if(!pathSet.has(key(nx,ny))){notify('No hay una baldosa segura dos casillas adelante. Revisa el rumbo o avanza una casilla.');return false}$('.player-cell .bee')?.classList.add('bee-jump');await pause(170);player.x=nx;player.y=ny;steps+=2;renderBoard();updateProgress();return true}
+function walk(distance=1){const dir=directions[player.dir];for(let n=0;n<distance;n++){const nx=player.x+dir.x,ny=player.y+dir.y;if(!pathSet.has(key(nx,ny))){const chestIndex=chests.findIndex((chest,index)=>chest.x===player.x&&chest.y===player.y&&!opened.has(index));if(chestIndex>=0){notify('chestAtFeet',{number:chestIndex+1});return false}const target=nearestChest();const targetPoint=target.index>=0?chests[target.index]:null;const turnNeeded=targetPoint&&Math.abs(player.x-targetPoint.x)+Math.abs(player.y-targetPoint.y)<5;const direction=locale().directions[dir.key];notify(turnNeeded?'blockedTurn':'blockedObstacle',{direction});return false}player.x=nx;player.y=ny;steps++;renderBoard();updateProgress()}return true}
+async function jump(){const dir=directions[player.dir],nx=player.x+dir.x*2,ny=player.y+dir.y*2;if(!pathSet.has(key(nx,ny))){notify('jumpUnsafe');return false}$('.player-cell .bee')?.classList.add('bee-jump');await pause(170);player.x=nx;player.y=ny;steps+=2;renderBoard();updateProgress();return true}
 function openChest(index){if(index<0||index>=chests.length)return false;const isNew=!opened.has(index);opened.add(index);renderBoard(isNew?index:-1);updateProgress();reveal(index);return true}
-function interact(){let index=chests.findIndex((chest,i)=>chest.x===player.x&&chest.y===player.y&&!opened.has(i));if(index<0){const current=chests.findIndex(chest=>chest.x===player.x&&chest.y===player.y);if(current>=0)index=current;else{const nearby=nearestChest();if(nearby.index>=0&&nearby.distance<=1)index=nearby.index;else{notify(nearby.index>=0?`El cofre ${nearby.index+1} está a ${nearby.distance} casillas. Acércate y vuelve a interactuar.`:'¡Ya descubriste todos los cofres!');return false}}}return openChest(index)}
-async function execute(){if(isRunning)return;if(!commands.length){notify('Agrega bloques tocando una instrucción o arrastrándola al programa.');return}isRunning=true;const button=$('#runButton');button.disabled=true;setRunControlsDisabled(true);const sequence=[...commands];try{for(const op of sequence){let success=true;if(op==='move')success=walk();else if(op==='jump')success=await jump();else if(op==='right'){player.dir=(player.dir+1)%4;renderBoard();updateProgress()}else if(op==='left'){player.dir=(player.dir+3)%4;renderBoard();updateProgress()}else if(op==='interact')success=interact();if(!success)break;if(op==='interact'&&$('#discoveryCard').classList.contains('show'))await new Promise(resolve=>{discoveryResolver=resolve});else await pause(220)}}finally{isRunning=false;button.disabled=false;setRunControlsDisabled(false);updateMapStatus();restoreDiscoveryFocus()}}
+function interact(){let index=chests.findIndex((chest,i)=>chest.x===player.x&&chest.y===player.y&&!opened.has(i));if(index<0){const current=chests.findIndex(chest=>chest.x===player.x&&chest.y===player.y);if(current>=0)index=current;else{const nearby=nearestChest();if(nearby.index>=0&&nearby.distance<=1)index=nearby.index;else{if(nearby.index>=0)notify('chestAway',{number:nearby.index+1,distance:nearby.distance});else notify('allChestsOpen');return false}}}return openChest(index)}
+async function execute(){if(isRunning)return;if(!commands.length){notify('emptyProgram');return}isRunning=true;const button=$('#runButton');button.disabled=true;setRunControlsDisabled(true);const sequence=[...commands];try{for(const op of sequence){let success=true;if(op==='move')success=walk();else if(op==='jump')success=await jump();else if(op==='right'){player.dir=(player.dir+1)%4;renderBoard();updateProgress()}else if(op==='left'){player.dir=(player.dir+3)%4;renderBoard();updateProgress()}else if(op==='interact')success=interact();if(!success)break;if(op==='interact'&&$('#discoveryCard').classList.contains('show'))await new Promise(resolve=>{discoveryResolver=resolve});else await pause(220)}}finally{isRunning=false;button.disabled=false;setRunControlsDisabled(false);updateMapStatus();restoreDiscoveryFocus()}}
 function addCommand(op,index=commands.length){if(isRunning||!commandsInfo[op])return;commands.splice(Math.max(0,Math.min(index,commands.length)),0,op);renderCommands()}
 function removeCommand(index){if(isRunning||index<0||index>=commands.length)return;commands.splice(index,1);renderCommands();if(commands.length)$(`.program-block[data-index="${Math.min(index,commands.length-1)}"] .remove-block`)?.focus();else $('#workspace').focus()}
 function moveCommand(from,to){if(isRunning||from===to||from<0||from>=commands.length)return;const [op]=commands.splice(from,1);commands.splice(from<to?to-1:to,0,op);renderCommands()}
@@ -292,9 +330,9 @@ function setTrashActive(active){trash.classList.toggle('is-over',active)}
 
 $$('.palette-block').forEach(block=>{block.addEventListener('dragstart',event=>{event.dataTransfer.setData('text/plain',block.dataset.op);event.dataTransfer.effectAllowed='copy';block.classList.add('is-dragging')});block.addEventListener('dragend',()=>block.classList.remove('is-dragging'));block.addEventListener('click',()=>addCommand(block.dataset.op))});
 workspace.addEventListener('dragover',event=>{event.preventDefault();workspace.classList.add('drag-over')});workspace.addEventListener('dragleave',event=>{if(!workspace.contains(event.relatedTarget))workspace.classList.remove('drag-over')});workspace.addEventListener('drop',event=>{event.preventDefault();workspace.classList.remove('drag-over');const value=event.dataTransfer.getData('text/plain');if(value.startsWith('reorder:'))moveCommand(Number(value.split(':')[1]),commands.length);else addCommand(value)});
-trash.addEventListener('dragover',event=>{event.preventDefault();event.dataTransfer.dropEffect='move';setTrashActive(true)});trash.addEventListener('dragenter',event=>{event.preventDefault();setTrashActive(true)});trash.addEventListener('dragleave',event=>{if(!trash.contains(event.relatedTarget))setTrashActive(false)});trash.addEventListener('drop',event=>{event.preventDefault();const value=event.dataTransfer.getData('text/plain');setTrashActive(false);if(value.startsWith('reorder:'))removeCommand(Number(value.split(':')[1]));else notify('La papelera elimina bloques que ya están dentro de tu programa.')});
+trash.addEventListener('dragover',event=>{event.preventDefault();event.dataTransfer.dropEffect='move';setTrashActive(true)});trash.addEventListener('dragenter',event=>{event.preventDefault();setTrashActive(true)});trash.addEventListener('dragleave',event=>{if(!trash.contains(event.relatedTarget))setTrashActive(false)});trash.addEventListener('drop',event=>{event.preventDefault();const value=event.dataTransfer.getData('text/plain');setTrashActive(false);if(value.startsWith('reorder:'))removeCommand(Number(value.split(':')[1]));else notify('trashHelp')});
 $('#runButton').addEventListener('click',execute);
-$('#resetButton').addEventListener('click',()=>{if(isRunning)return;player={...spawn};commands=[];opened.clear();steps=0;lastPlayerCell=null;renderCommands();renderBoard();updateProgress();updateMapStatus();$('#discoveryCard').classList.remove('show','complete');$('#assistant').classList.add('show');advice('¡Listos para jugar!','Programa el vuelo y encuentra las seis paradas del sendero.')});
+$('#resetButton').addEventListener('click',()=>{if(isRunning)return;player={...spawn};commands=[];opened.clear();steps=0;lastPlayerCell=null;activeDiscovery=null;renderCommands();renderBoard();updateProgress();updateMapStatus();$('#discoveryCard').classList.remove('show','complete');$('#assistant').classList.add('show');advice('readyTitle','readyMessage')});
 $$('.checkpoint').forEach(button=>button.addEventListener('click',()=>jumpCheckpoint(button.dataset.checkpoint)));
 $('#hintButton').addEventListener('click',giveHint);
 $('#replayWelcomeTour').addEventListener('click',openWelcomeTour);
@@ -304,14 +342,15 @@ $('#tourNext').addEventListener('click',advanceWelcomeTour);
 $('#tourArtButton').addEventListener('click',()=>{if(suppressWelcomeArtClick){suppressWelcomeArtClick=false;return}advanceWelcomeTour()});
 $('#tourCard').addEventListener('touchstart',event=>{welcomeTouchStart={x:event.changedTouches[0].clientX,y:event.changedTouches[0].clientY,startedOnArt:Boolean(event.target.closest('#tourArtButton'))}},{passive:true});
 $('#tourCard').addEventListener('touchend',event=>{if(!welcomeTouchStart)return;const gesture=welcomeTouchStart,dx=event.changedTouches[0].clientX-gesture.x,dy=event.changedTouches[0].clientY-gesture.y;welcomeTouchStart=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.25){if(gesture.startedOnArt){event.preventDefault();suppressWelcomeArtClick=true;window.setTimeout(()=>{suppressWelcomeArtClick=false},80)}renderWelcomeTourStep(welcomeTourIndex+(dx<0?1:-1))}},{passive:false});
-$('#portfolioButton').addEventListener('click',()=>{$('#discoveryKicker').textContent='PORTAFOLIO';$('#discoveryTitle').textContent='¡Hola! Soy Alejandro';$('#discoveryText').textContent='Estudiante de Ingeniería de Software en la Universidad Cooperativa de Colombia, con interés en ciberseguridad, motos y abejas. Explora mis proyectos y encuéntrame en Instagram o GitHub.';$('#discoveryArt').innerHTML=artMarkup('bee');$('#discoveryBadge').hidden=true;renderHighlights([]);$('#discoveryCard').setAttribute('aria-describedby','discoveryText');renderLinks([...projectLinks,...contactLinks]);$('#discoveryCard').classList.remove('complete');showDiscovery()});
+$('#portfolioButton').addEventListener('click',()=>{activeDiscovery={type:'portfolio'};renderDiscoveryContent();showDiscovery()});
+$('#languageSelect').addEventListener('change',event=>setLanguage(event.target.value));
 $('#textDecreaseButton').addEventListener('click',()=>{visualSettings.textScale=Math.max(0,visualSettings.textScale-1);applyVisualSettings(true)});
 $('#textIncreaseButton').addEventListener('click',()=>{visualSettings.textScale=Math.min(2,visualSettings.textScale+1);applyVisualSettings(true)});
 $('#contrastButton').addEventListener('click',()=>{visualSettings.highContrast=!visualSettings.highContrast;applyVisualSettings(true)});
 $('#motionButton').addEventListener('click',()=>{visualSettings.reduceMotion=!visualSettings.reduceMotion;applyVisualSettings(true)});
 $('#dismissAssistant').addEventListener('click',()=>$('#assistant').classList.remove('show','attention'));
 function restoreDiscoveryFocus(){if(!previousFocus)return;if(previousFocus.isConnected&&!previousFocus.disabled){previousFocus.focus();previousFocus=null}else if(previousFocus.disabled&&isRunning){previousFocus=null;workspace.focus()}else if(!previousFocus.isConnected)previousFocus=null}
-function closeDiscovery(){ $('#discoveryCard').classList.remove('show');restoreDiscoveryFocus();if(discoveryResolver){const resume=discoveryResolver;discoveryResolver=null;resume()}}
+function closeDiscovery(){ $('#discoveryCard').classList.remove('show');activeDiscovery=null;restoreDiscoveryFocus();if(discoveryResolver){const resume=discoveryResolver;discoveryResolver=null;resume()}}
 $('#closeDiscovery').addEventListener('click',closeDiscovery);$('#continueDiscovery').addEventListener('click',closeDiscovery);$('#discoveryCard').addEventListener('click',event=>{if(event.target.id==='discoveryCard')closeDiscovery()});
 workspace.addEventListener('keydown',event=>{if(event.target!==workspace)return;if(event.key==='Enter'||event.key===' '){event.preventDefault();execute()}});
 window.addEventListener('keydown',event=>{
@@ -340,6 +379,6 @@ window.addEventListener('keydown',event=>{
   }
 });
 window.addEventListener('resize',updateCamera);
-applyVisualSettings();
+applyStaticTranslations();applyVisualSettings();renderAdvice();
 buildBoard();renderBoard();renderCommands();updateProgress();updateMapStatus();$('#assistant').classList.add('show');
 if(!hasSeenWelcomeTour)window.setTimeout(()=>{if(!hasSeenWelcomeTour&&$('#welcomeTour').hidden)openWelcomeTour()},220);

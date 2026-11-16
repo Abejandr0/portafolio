@@ -70,7 +70,10 @@
 .checkpoint{min-height:40px}
 .accessibility-tools{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px;margin:-2px 0 11px}
 .accessibility-label{margin-right:auto;color:#7b8981;font:9px 'DM Mono',monospace;letter-spacing:.06em}
+.language-label{margin:0 0 0 4px}
 .accessibility-tools button{min-height:32px;padding:5px 9px;border:1px solid #d5dfd6;border-radius:9px;background:#fff;color:#42584c;font-size:11px;font-weight:800;cursor:pointer}
+.accessibility-tools select{min-height:32px;max-width:118px;padding:4px 22px 4px 8px;border:1px solid #d5dfd6;border-radius:9px;background:#fff;color:#42584c;font:800 10px 'Nunito',sans-serif;cursor:pointer}
+.accessibility-tools select:focus-visible{outline:3px solid #7da989;outline-offset:2px}
 .accessibility-tools button:hover{border-color:#87af8c;background:#f2f8ee}
 .accessibility-tools button[aria-pressed="true"]{border-color:#426d50;background:#e3f1df;color:#274d35;box-shadow:inset 0 0 0 1px #426d50}
 .accessibility-tools button:disabled{opacity:.48;cursor:not-allowed}
@@ -86,8 +89,8 @@ body.text-scale-1{zoom:1.08}
 body.text-scale-2{zoom:1.16}
 body.high-contrast{color:#111!important;background:#fff!important}
 body.high-contrast .game-shell{background:#fff}
-body.high-contrast :is(.world-card,.workbench,.mission-progress,.map-frame,.block-palette,.code-panel,.workspace,.assistant,.discovery-content,.checkpoint,.profile-link,.accessibility-tools button){border-color:#263238!important}
-body.high-contrast :is(.world-card,.workbench,.mission-progress,.block-palette,.code-panel,.workspace,.assistant,.discovery-content,.checkpoint,.profile-link,.accessibility-tools button){background:#fff!important;color:#111!important}
+body.high-contrast :is(.world-card,.workbench,.mission-progress,.map-frame,.block-palette,.code-panel,.workspace,.assistant,.discovery-content,.checkpoint,.profile-link,.accessibility-tools button,.accessibility-tools select){border-color:#263238!important}
+body.high-contrast :is(.world-card,.workbench,.mission-progress,.block-palette,.code-panel,.workspace,.assistant,.discovery-content,.checkpoint,.profile-link,.accessibility-tools button,.accessibility-tools select){background:#fff!important;color:#111!important}
 body.high-contrast :is(.world-heading h1,.world-heading p,.workbench-heading h2,.workbench-heading p,.eyebrow,.checkpoint-intro,.checkpoint-intro strong,.checkpoint-intro span,.checkpoint,.accessibility-label,.mission-label,.mission-count,.progress-caption,.map-topline,.map-bottomline,.palette-heading h3,.palette-foot,.sequence-label,.start-block,.assistant p,.assistant b,.discovery-copy h2,.discovery-copy p,.discovery-kicker,.page-footer,.profile-link){color:#111!important}
 body.high-contrast :is(.weather-badge,.code-toolbar,.drop-prompt,.editor-note,.mission-count i,.heading-readout,.steps-readout){color:#111!important}
 body.high-contrast :is(.palette-heading span,.drag-tip,.trash-zone,.trash-zone small,.editor-note,.discovery-links a,.discovery-links a span,.reset-button,.portfolio-button,.assistant>button,.profile-link span){color:#111!important}
@@ -450,6 +453,7 @@ body{height:100vh;height:100dvh;min-height:0;overflow:hidden}
 .topbar .accessibility-tools{flex:none;flex-wrap:nowrap;align-items:center;gap:4px;margin:0}
 .topbar .accessibility-label{flex:none;margin:0 2px 0 0;white-space:nowrap;font-size:8px;letter-spacing:.04em}
 .topbar .accessibility-tools button{min-height:30px;padding:4px 7px;font-size:9px;white-space:nowrap}
+.topbar .accessibility-tools select{min-height:30px;max-width:112px;padding:4px 18px 4px 6px;font-size:9px}
 .game-layout{grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr)}
 .world-card>.checkpoint-nav{margin:4px 0}
 @media(max-width:1300px){
